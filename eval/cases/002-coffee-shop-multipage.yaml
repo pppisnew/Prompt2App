@@ -1,0 +1,39 @@
+id: "002-coffee-shop-multipage"
+title: "咖啡店多页静态站"
+difficulty: medium
+expected_strategy: MULTI_FILE
+tags:
+  - multipage
+  - business
+  - navigation
+
+prompt: |
+  给"豆豆咖啡"做一个静态官网，包含首页（介绍品牌故事和招牌产品）、菜单页（至少 6 款咖啡，含图片占位、价格、描述）、
+  门店页（3 家分店地址 + 营业时间）、联系页（表单 + 地图占位）。
+  要求暖色调、复古风格、页面之间有顶部导航互相跳转。
+
+rubric:
+  must_contain:
+    - "豆豆咖啡"
+    - "菜单"
+    - "门店"
+    - "联系"
+    - "<nav"                    # 必须有导航元素
+    - "href"                    # 页面间跳转
+  must_not_contain:
+    - "lorem ipsum"
+    - "<!-- placeholder -->"
+    - "Coming soon"
+  llm_judge_dimensions:
+    - "至少 4 个页面文件且互相可跳转"
+    - "整体风格统一（颜色/字体/间距）"
+    - "菜单页有 ≥6 款产品，每款有名称+价格+描述"
+    - "导航在所有页面位置一致"
+  min_files: 4
+
+notes: |
+  MultiFile 策略的中等难度 case。考察点：
+    1. Router 是否避免误升到 Vue（关键词无"应用/状态/交互"）；
+    2. 多文件之间的导航一致性（最常见的退化点：每个文件 nav 不一样）；
+    3. 风格一致性（不同页面颜色/字体应一致）。
+  当前现版项目此 case 的失败模式：经常把 menu 项写得过于简略（< 6 款），或 nav 跳转 href 不正确。

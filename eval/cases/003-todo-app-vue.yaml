@@ -1,0 +1,46 @@
+id: "003-todo-app-vue"
+title: "Vue 待办事项应用"
+difficulty: hard
+expected_strategy: VUE_PROJECT
+tags:
+  - vue
+  - state
+  - crud
+  - localstorage
+
+prompt: |
+  做一个待办事项 Web 应用，使用 Vue 3 + Composition API。功能：
+    1. 添加任务（输入框 + 添加按钮，回车也能添加）；
+    2. 标记完成 / 取消完成（点击 checkbox）；
+    3. 删除任务（每条任务右侧有删除按钮，点击前需要二次确认）；
+    4. 顶部按状态筛选：全部 / 进行中 / 已完成；
+    5. 底部显示 "还剩 N 项未完成"；
+    6. 数据持久化到 localStorage，刷新页面不丢；
+    7. 整体使用浅色主题、圆角卡片、移动端友好。
+
+rubric:
+  must_contain:
+    - "package.json"
+    - "vue"
+    - "ref"                     # 或 reactive，体现 Composition API
+    - "localStorage"
+    - "addEventListener"        # 回车键监听 或 watch
+  must_not_contain:
+    - "options API"             # 期望 Composition API
+    - "TODO"
+    - "// 待补充"
+  llm_judge_dimensions:
+    - "添加/完成/删除/筛选 4 项功能均可实现"
+    - "二次确认对话框存在（不一定要 modal，confirm 也算）"
+    - "localStorage 读写在 mount 与变更时正确触发"
+    - "组件结构合理（不是全部塞 App.vue）"
+    - "样式响应式（移动端宽度不溢出）"
+  min_files: 4
+
+notes: |
+  Vue 策略的核心 case。考察点：
+    1. Router 是否正确识别为 Vue（关键词"应用/状态/CRUD/Vue"，prompt > 200 字）；
+    2. Tool Calling Agent 是否能正确创建 package.json + 多个 .vue 文件；
+    3. 状态管理是否正确（localStorage 持久化是常见漏点）；
+    4. 交互完整性（二次确认/回车提交是常见漏点）。
+  此 case 是后续路由准确率 / Agent 完成度的核心样本，建议手工逐项核验。
