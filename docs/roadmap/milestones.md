@@ -12,7 +12,7 @@
 | **1** | 模块化单体收敛 | 2d | ✅ Done | ADR-0001 + 删除 microservice + 6 包结构 + module-design v1 + evaluator 回归 9/9 | ⭐⭐⭐ |
 | **2** | 删 LangChain4j Patch | 2d | ✅ Done | ADR-0002 + 1.1.0→1.5.1 + 删 1450 行 patch + API 适配 | ⭐⭐⭐⭐ |
 | **3** | Tool 安全体系 | 4d | ✅ Done | ADR-0004 + 三层防御（Layer 1/2/3）+ 27 单测进 CI + 5 tool 接入 | ⭐⭐⭐⭐⭐ |
-| **4** | AI Router 重写 | 4d | ⚪ Pending | ADR-0003 + 路由埋点 | ⭐⭐⭐⭐⭐ |
+| **4** | AI Router 重写 | 4d | ✅ Done | ADR-0003 + 两层路由 + 17 单测 + **80% 准确率 / 88% 命中率** | ⭐⭐⭐⭐⭐ |
 | **5** | Eval 体系自动化 | 5d | ⚪ Pending | ADR-0005 + CI 回归 | ⭐⭐⭐⭐⭐ |
 | **6** | 质量指标埋点 | 3d | ⚪ Pending | metric 表 + SQL 报表 | ⭐⭐⭐⭐ |
 | **7** | 收尾 | 2d | ⚪ Pending | ADR-0006/0007 + README | ⭐⭐⭐ |
@@ -123,3 +123,5 @@
 | 2026-06-18 | Phase 2 | In Progress | **Done** | API 适配 onPartialToolExecutionRequest → beforeToolExecution；mvn compile 180 class；evaluator 9/9 持平 |
 | 2026-06-18 | Phase 3 | Pending | In Progress | ADR-0004 起草，PathValidator/Sandbox/ToolCallCounter 三层就绪，27/27 safety 单测过 |
 | 2026-06-18 | Phase 3 | In Progress | **Done** | 5 个 file tool 全部接入 safety；mvn test 36/36（27 safety + 9 evaluator）；面试爆点 #1 落地 |
+| 2026-06-18 | Phase 4 | Pending | In Progress | ADR-0003 起草，RoutingDecision/RuleRouter/RoutingService 三类就绪；接入两个调用点 |
+| 2026-06-18 | Phase 4 | In Progress | **Done** | 规则调优后 Layer 1 准确率 60%→80%、命中率 88%；17 router 单测全过；面试爆点 #2 落地 |

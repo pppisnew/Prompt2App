@@ -79,6 +79,9 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
     @Resource
     private AiCodeGenTypeRoutingServiceFactory aiCodeGenTypeRoutingServiceFactory;
 
+    @Resource
+    private com.prompt2app.router.RoutingService routingService;
+
     @Override
     public Flux<String> chatToGenCode(Long appId, String message, User loginUser) {
         // 1. 参数校验
@@ -127,14 +130,16 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
         app.setUserId(loginUser.getId());
         // 应用名称暂时为 initPrompt 前 12 位
         app.setAppName(initPrompt.substring(0, Math.min(initPrompt.length(), 12)));
-        // 使用 AI 智能选择代码生成类型（多例模式）
-        AiCodeGenTypeRoutingService aiCodeGenTypeRoutingService = aiCodeGenTypeRoutingServiceFactory.createAiCodeGenTypeRoutingService();
-        CodeGenTypeEnum selectedCodeGenType = aiCodeGenTypeRoutingService.routeCodeGenType(initPrompt);
+        // 使用两层 AI Router（规则 + LLM 兜底）选择代码生成类型 —— ADR-0003
+        com.prompt2app.router.RoutingDecision routingDecision = routingService.route(initPrompt);
+        CodeGenTypeEnum selectedCodeGenType = routingDecision.getStrategy();
         app.setCodeGenType(selectedCodeGenType.getValue());
         // 插入数据库
         boolean result = this.save(app);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-        log.info("应用创建成功，ID: {}, 类型: {}", app.getId(), selectedCodeGenType.getValue());
+        log.info("应用创建成功，ID: {}, 类型: {}, 路由层: {}, 耗时: {}ms",
+                app.getId(), selectedCodeGenType.getValue(),
+                routingDecision.getLayer(), routingDecision.getDurationMs());
         return app.getId();
     }
 
