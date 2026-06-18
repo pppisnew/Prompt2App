@@ -26,3 +26,4 @@ YYYY-MM-DD-<phase>-<slug>.md
 | 2026-06-18 | Phase 0 | [补齐评测集 v0 至 25 条 case](./2026-06-18-phase0-fill-eval-cases.md) | 项目作者 + AI | ✅ 完成 |
 | 2026-06-18 | Phase 0 | [评测执行器 v0 + baseline 跑通（收官）](./2026-06-18-phase0-evaluator-and-baseline.md) | 项目作者 + AI | ✅ 完成 |
 | 2026-06-18 | Phase 1 | [模块化单体收敛（按域分 6 包 + 删除微服务）](./2026-06-18-phase1-modular-monolith.md) | 项目作者 + AI | ✅ 完成 |
+| 2026-06-18 | Phase 2 | [删除 LangChain4j 源码覆盖 patch + 升级到 1.5.1](./2026-06-18-phase2-remove-langchain4j-patch.md) | 项目作者 + AI | ✅ 完成 |

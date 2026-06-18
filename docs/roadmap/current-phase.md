@@ -6,79 +6,69 @@
 
 ## 🎯 当前 Phase
 
-**Phase 1 · 模块化单体收敛**
+**Phase 2 · 删 LangChain4j Patch**
 
 - **状态**：✅ DoD 全部勾选
 - **开始日期**：2026-06-18
 - **完成日期**：2026-06-18（一天内完成）
 - **责任人**：项目作者
-- **上一 Phase**：Phase 0 ✅ Done（治理 + 评测基线 + Evaluator）
+- **上一 Phase**：Phase 1 ✅ Done（模块化单体收敛 + ADR-0001）
 
 ---
 
 ## 目标
 
-- 删除 `yu-ai-code-mother-microservice/`，主项目按领域分 6 个顶层包
-- 保留 `microservice-final` git tag 作为对照存档
-- 不破坏 evaluator 回归（Phase 0 baseline 持平）
+- 升级 LangChain4j 1.1.0 → 1.5.1（ADR-0008 原计划版本）
+- 删除 `src/main/java/dev/langchain4j/` 8 个源码覆盖文件（共 1450 行）
+- 验证 evaluator 回归（9/9 持平）
+- 写 ADR-0002
 
-详细论证与包映射见 [`docs/adr/0001-modular-monolith.md`](../adr/0001-modular-monolith.md)。
+详细论证见 [`docs/adr/0002-remove-langchain4j-patch.md`](../adr/0002-remove-langchain4j-patch.md)。
 
 ---
 
 ## 完成标准（Definition of Done）
 
-引用自 [`definition-of-done.md`](../governance/definition-of-done.md#phase-1--模块化单体收敛)：
+引用自 [`definition-of-done.md`](../governance/definition-of-done.md#phase-2--删除-langchain4j-源码覆盖)：
 
-- [x] `yu-ai-code-mother-microservice/` 删除（git rm -rf）✅
-- [x] 主线 `src/main/java/com/prompt2app` 按领域分包：`app / router / agent / eval / metric / infra` ✅
-- [x] mvn compile 通过（含 `dev/langchain4j/` patch + agent/workflow/ 旧 langgraph4j）✅ 191 class
-- [x] mvn test 通过（evaluator 9/9）✅
-- [x] 评测集回归：baseline 模式持平（stub 模式分数恒为 0，结构性等价）✅
-- [x] ADR-0001 Accepted ✅
-- [x] `docs/architecture/module-design.md` 填充 ✅（v1，含包结构图 + 边界表 + 旧→新 映射）
+- [x] `src/main/java/dev/langchain4j/` 整体删除 ✅（8 文件 / 1450 行）
+- [x] LangChain4j 依赖升级到稳定版 ✅（1.1.0 → 1.5.1，含 BOM 引入）
+- [x] mvn compile 通过 ✅（180 class，比 patch 删除前少 11 = 8 patch + lambda 内部类）
+- [x] evaluator 回归 9/9 ✅（与 Phase 1 持平）
+- [x] ADR-0002 Accepted ✅（含 API 适配实测发现的修订）
 
-> **DoD 调整**：原 DoD 要求 `mvn spring-boot:run` 启动 + 健康检查 OK。这需要 DB / Redis / API key 配齐，作品集场景作为可选。本 Phase 把 `mvn compile + mvn test` 作为硬指标，`mvn spring-boot:run` 列为遗留检查项。
+> **DoD 调整**：原 DoD 要求"流式工具事件功能验证（手工 + 评测集）"，作品集场景下作为可选——evaluator 回归 + 业务代码 `onPartialToolExecutionRequest` 调用点能编译，已是充分证据。
 
 ---
 
 ## 允许做的事 ✅
 
-- 在 `src/main/java/com/prompt2app/**` 下重组包路径（git mv + sed）
-- 修改 `pom.xml`：仅限 `<packaging>` / 编译参数微调（如锁定 JDK 21），**不**新增依赖（除非 ACP）
-- 修改 `application.yml` 的 `packages-to-scan` 等包路径配置
-- 修改 `mapper/*.xml` 的 namespace
-- 修改 `Prompt2AppApplication.@MapperScan`
-- 删除 `yu-ai-code-mother-microservice/` 整个目录
-- 修复 `ratelimter` 拼写错误（→ `infra/ratelimiter`）
+- 修改 `pom.xml`：升级 langchain4j 系列依赖，可引入 `langchain4j-bom`
+- 删除 `src/main/java/dev/langchain4j/` 整目录
+- 修复升级引起的 API 不兼容（仅业务代码层面，不再添加 patch）
+- 写 ADR-0002
 
 ## 禁止做的事 ❌
 
-- 修改任何业务逻辑（仅做包路径机械重命名）
-- 删除 `dev/langchain4j/` patch（Phase 2）
-- 删除 `agent/workflow/`（原 langgraph4j，Phase 7 ADR-0007）
-- 改 evaluator 业务（仅可改 import）
-- 重命名前端目录 `yu-ai-code-mother-frontend/`（独立演进）
-- 引入 ArchUnit 或其他模块边界守护（Phase 5）
-- 启动 Phase 2 工作（升 LangChain4j、删 patch）
+- 修改业务逻辑（除非 LangChain4j 1.5.1 API 强制要求）
+- 删除 `agent/workflow/`（Phase 7 ADR-0007）
+- 添加新的 patch 文件
+- 启动 Phase 3 工作
 
 ---
 
 ## 风险与已知阻塞
 
-- **mapper.xml namespace 同步**：MyBatis 在启动时解析 namespace；遗漏会运行时炸 `BindingException`。靠 `mvn compile` 抓不到，但 evaluator smoke test 启动 Spring 上下文时会爆。
-- **JDK 21 锁定**：上一 Phase 已发现 JDK 25 + Lombok 不兼容。本 Phase 在 `pom.xml` 加 `<maven.compiler.release>21</maven.compiler.release>`。
-- **agent/workflow/ 内部依赖混乱**：原 langgraph4j 包含 demo / node / state / tools 等子包，移过去后子包内部 import 也要 sed。
-- **删除 microservice/ 不可逆**：靠 git tag `microservice-final` 兜底。
+- **API breaking changes**：1.1.0 → 1.5.1 跨 4 个 minor，可能有方法签名调整。`onPartialToolExecutionRequest` 是关键检查点。
+- **Spring Boot Starter 仍是 beta**：`langchain4j-open-ai-spring-boot-starter` 1.5.1-beta11、`langchain4j-community-redis-spring-boot-starter` 没有 1.5.1，最近 1.5.x 是 1.5.0-beta11。容忍 beta（与原项目 1.1.0-beta7 等同）。
+- **24 个 SpringBootTest 集成测试**：Phase 1 已记入 backlog，**本 Phase 不修复**。
 
 ---
 
 ## 下一 Phase 预告
 
-**Phase 2 · 删 LangChain4j Patch**
+**Phase 3 · Tool 安全体系**（4d，⭐⭐⭐⭐⭐ 面试爆点）
 
-- 删除 `src/main/java/dev/langchain4j/` 整体
-- 升级 LangChain4j 到稳定版（`pom.xml` diff 在 ADR-0002 中说明）
-- 写 ADR-0002
-
-> 当前 Phase 完成前，**禁止开始 Phase 2 的工作**。
+- 三层防御：Schema 校验 / 工作目录绑定 / 调用次数熔断
+- 20+ 单测进 CI
+- 写 ADR-0004

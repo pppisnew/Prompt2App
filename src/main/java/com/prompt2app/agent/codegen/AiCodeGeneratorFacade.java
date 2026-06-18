@@ -17,6 +17,7 @@ import com.prompt2app.infra.exception.ErrorCode;
 import com.prompt2app.app.model.enums.CodeGenTypeEnum;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.service.TokenStream;
+import dev.langchain4j.service.tool.BeforeToolExecution;
 import dev.langchain4j.service.tool.ToolExecution;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -115,8 +116,11 @@ public class AiCodeGeneratorFacade {
                         AiResponseMessage aiResponseMessage = new AiResponseMessage(partialResponse);
                         sink.next(JSONUtil.toJsonStr(aiResponseMessage));
                     })
-                    .onPartialToolExecutionRequest((index, toolExecutionRequest) -> {
-                        ToolRequestMessage toolRequestMessage = new ToolRequestMessage(toolExecutionRequest);
+                    .beforeToolExecution((BeforeToolExecution beforeToolExec) -> {
+                        // 1.5.1 用 beforeToolExecution 替代旧 patch 的 onPartialToolExecutionRequest，
+                        // 行为差异：原 patch 流式发送增量参数；现在一次性在执行前发送完整工具请求。
+                        // 对 SSE UX 影响极小（tool 请求仍展示在执行前），见 ADR-0002 §代价。
+                        ToolRequestMessage toolRequestMessage = new ToolRequestMessage(beforeToolExec.request());
                         sink.next(JSONUtil.toJsonStr(toolRequestMessage));
                     })
                     .onToolExecuted((ToolExecution toolExecution) -> {
