@@ -35,7 +35,7 @@ springdoc:
   group-configs:
     - group: 'default'
       paths-to-match: '/**'
-      packages-to-scan: com.prompt2app.controller
+      packages-to-scan: com.prompt2app.app.controller
 # knife4j
 knife4j:
   enable: true

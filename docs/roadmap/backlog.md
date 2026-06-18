@@ -22,7 +22,7 @@
 
 ## Phase 2 范围
 
-- _（暂无）_
+- **2026-06-18** · 24 个 SpringBootTest 集成测试需环境才能跑（DB / Redis / API key）。`langgraph4j` 旧测试 + `WebScreenshotUtilsTest` + `AiCodeGenTypeRoutingServiceTest` 全部依赖完整 Spring 上下文。Phase 2/3 时考虑：① 引入 testcontainers 提供本地基础设施 ② 给这些测试加 `@DisabledIfEnvironmentVariable(named = "CI", matches = "true")` 仅本地手动跑 ③ 拆成纯单测 + 集成测试两套。
 
 ## Phase 3 范围
 

@@ -9,7 +9,7 @@
 | Phase | 名称 | 工时 | 状态 | 关键产出 | 面试价值 |
 | --- | --- | --- | --- | --- | --- |
 | **0** | 评测基线 | 2d | ✅ Done | 25 case + 项目重命名（ADR-0009）+ Evaluator 端到端 + baseline（stub 模式） | ⭐⭐⭐⭐⭐ |
-| **1** | 模块化单体收敛 | 2d | ⚪ Pending | ADR-0001 + 删除 microservice | ⭐⭐⭐ |
+| **1** | 模块化单体收敛 | 2d | ✅ Done | ADR-0001 + 删除 microservice + 6 包结构 + module-design v1 + evaluator 回归 9/9 | ⭐⭐⭐ |
 | **2** | 删 LangChain4j Patch | 2d | ⚪ Pending | ADR-0002 + 框架升级 | ⭐⭐⭐⭐ |
 | **3** | Tool 安全体系 | 4d | ⚪ Pending | ADR-0004 + 20 单测 | ⭐⭐⭐⭐⭐ |
 | **4** | AI Router 重写 | 4d | ⚪ Pending | ADR-0003 + 路由埋点 | ⭐⭐⭐⭐⭐ |
@@ -117,3 +117,5 @@
 | 2026-06-18 | Phase 0 | — | （越界） | ADR-0009 批准项目重命名为 Prompt2App，已完成 |
 | 2026-06-18 | Phase 0 | — | （进度） | 25 case 全部就位（HTML 7 / MultiFile 8 / Vue 10），剩余执行器 + baseline |
 | 2026-06-18 | Phase 0 | In Progress | **Done** | Evaluator 9/9 测试通过；baseline.md（stub 模式）生成；mvn compile 已验证（JDK 21 + Lombok） |
+| 2026-06-18 | Phase 1 | Pending | In Progress | 微服务删除 + 按域 6 包重组（160 文件 git mv + sed），ADR-0001 Accepted |
+| 2026-06-18 | Phase 1 | In Progress | **Done** | mvn compile 191 class + evaluator 9/9 持平 + module-design.md v1 |

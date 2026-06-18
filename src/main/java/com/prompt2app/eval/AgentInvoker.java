@@ -8,7 +8,7 @@ import lombok.Value;
  *
  * <p>Phase 0 ships only {@link Stub}. Real implementations land in Phase 1+
  * (e.g. a {@code DirectServiceInvoker} that calls
- * {@code com.prompt2app.ai.AiCodeGeneratorService} once the surrounding
+ * {@code com.prompt2app.agent.AiCodeGeneratorService} once the surrounding
  * codebase compiles cleanly after the LangChain4j patch removal).
  *
  * <p>Implementations <b>must not throw</b> — failures are encoded into the

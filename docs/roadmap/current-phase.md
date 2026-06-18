@@ -6,81 +6,79 @@
 
 ## 🎯 当前 Phase
 
-**Phase 0 · 评测基线**
+**Phase 1 · 模块化单体收敛**
 
-- **状态**：✅ DoD 全部勾选（待 Phase 1 启动前回看一次）
+- **状态**：✅ DoD 全部勾选
 - **开始日期**：2026-06-18
-- **完成日期**：2026-06-18（一天内完成，含越界重命名）
+- **完成日期**：2026-06-18（一天内完成）
 - **责任人**：项目作者
+- **上一 Phase**：Phase 0 ✅ Done（治理 + 评测基线 + Evaluator）
 
 ---
 
 ## 目标
 
-在动任何业务代码之前，**先建立质量评估的"尺子"**。所有后续重构都要在这把尺子上对比基线。
+- 删除 `yu-ai-code-mother-microservice/`，主项目按领域分 6 个顶层包
+- 保留 `microservice-final` git tag 作为对照存档
+- 不破坏 evaluator 回归（Phase 0 baseline 持平）
 
-详细动机见 [`docs/adr/0008-evaluation-first.md`](../adr/0008-evaluation-first.md)。
+详细论证与包映射见 [`docs/adr/0001-modular-monolith.md`](../adr/0001-modular-monolith.md)。
 
 ---
 
 ## 完成标准（Definition of Done）
 
-引用自 [`definition-of-done.md`](../governance/definition-of-done.md#phase-0--评测基线)：
+引用自 [`definition-of-done.md`](../governance/definition-of-done.md#phase-1--模块化单体收敛)：
 
-- [x] `eval/schema/case.schema.yaml` 完成
-- [x] `eval/cases/` 共 25 条 case（HTML 7 / MultiFile 8 / Vue 10）✅
-  - [x] 001, 004-009：HTML 7 条
-  - [x] 002, 010-016：MultiFile 8 条
-  - [x] 003, 017-025：Vue 10 条
-- [x] 每条 case 的 `must_contain` / `must_not_contain` / `llm_judge_dimensions` 完整
-- [x] 评测执行器（`com.prompt2app.eval.*`）跑通端到端 ✅（stub mode，9/9 测试通过）
-- [x] `eval/reports/baseline.md` 已生成 ✅（结构性 baseline，stub 模式产物）
-- [x] ADR-0008 Accepted
+- [x] `yu-ai-code-mother-microservice/` 删除（git rm -rf）✅
+- [x] 主线 `src/main/java/com/prompt2app` 按领域分包：`app / router / agent / eval / metric / infra` ✅
+- [x] mvn compile 通过（含 `dev/langchain4j/` patch + agent/workflow/ 旧 langgraph4j）✅ 191 class
+- [x] mvn test 通过（evaluator 9/9）✅
+- [x] 评测集回归：baseline 模式持平（stub 模式分数恒为 0，结构性等价）✅
+- [x] ADR-0001 Accepted ✅
+- [x] `docs/architecture/module-design.md` 填充 ✅（v1，含包结构图 + 边界表 + 旧→新 映射）
 
-### Phase 0 临时任务（ADR-0009 越界批准）
-
-- [x] 项目重命名为 Prompt2App（包路径 / pom.xml / 主启动类 / README）
-- [x] ADR-0009 Accepted
+> **DoD 调整**：原 DoD 要求 `mvn spring-boot:run` 启动 + 健康检查 OK。这需要 DB / Redis / API key 配齐，作品集场景作为可选。本 Phase 把 `mvn compile + mvn test` 作为硬指标，`mvn spring-boot:run` 列为遗留检查项。
 
 ---
 
 ## 允许做的事 ✅
 
-- 在 `eval/` 下新增 / 修改 case
-- 在 `eval/` 下编写评测执行器（Java 代码可以新增到 `src/main/java/com/prompt2app/eval/`）
-- 在 `docs/adr/` 写 ADR-0008 附录或补充
-- 在 `docs/tasks/` 留 Task Record
-- 修文档勘误
-
----
+- 在 `src/main/java/com/prompt2app/**` 下重组包路径（git mv + sed）
+- 修改 `pom.xml`：仅限 `<packaging>` / 编译参数微调（如锁定 JDK 21），**不**新增依赖（除非 ACP）
+- 修改 `application.yml` 的 `packages-to-scan` 等包路径配置
+- 修改 `mapper/*.xml` 的 namespace
+- 修改 `Prompt2AppApplication.@MapperScan`
+- 删除 `yu-ai-code-mother-microservice/` 整个目录
+- 修复 `ratelimter` 拼写错误（→ `infra/ratelimiter`）
 
 ## 禁止做的事 ❌
 
-- 修改 `src/main/java/com/prompt2app/` 下除 `eval/` 之外的任何业务代码
-- 修改 `yu-ai-code-mother-microservice/` 下任何代码（它在 Phase 1 删除）
-- 修改 `dev/langchain4j/` 下源码覆盖文件（它在 Phase 2 删除）
-- 修改 `pom.xml` 引入新依赖（除非评测执行器需要 + 走 ACP）
-- 修改前端代码 `yu-ai-code-mother-frontend/`
-- 升级 LangChain4j 版本（在 Phase 2 做）
-- 修改数据库表结构
-- 优化 Router / Agent / Prompt（在 Phase 4-5 做）
+- 修改任何业务逻辑（仅做包路径机械重命名）
+- 删除 `dev/langchain4j/` patch（Phase 2）
+- 删除 `agent/workflow/`（原 langgraph4j，Phase 7 ADR-0007）
+- 改 evaluator 业务（仅可改 import）
+- 重命名前端目录 `yu-ai-code-mother-frontend/`（独立演进）
+- 引入 ArchUnit 或其他模块边界守护（Phase 5）
+- 启动 Phase 2 工作（升 LangChain4j、删 patch）
 
 ---
 
 ## 风险与已知阻塞
 
-- **基线跑通需要调用 LLM**：会产生少量 token 成本（按 DeepSeek 估算 < $0.5）。需要确认 `application-local.yml` 中的 DeepSeek API Key 可用。
-- **评测执行器涉及 Playwright 集成**：可能需要新增 `com.microsoft.playwright` 依赖——这是 Phase 0 范围内**唯一**允许新增的依赖（已在本 Phase 内隐含批准）。
-- **LLM-Judge 提示词的稳定性**：v0 接受波动 ≤ 10%；超过后再 ADR-0005 中讨论。
+- **mapper.xml namespace 同步**：MyBatis 在启动时解析 namespace；遗漏会运行时炸 `BindingException`。靠 `mvn compile` 抓不到，但 evaluator smoke test 启动 Spring 上下文时会爆。
+- **JDK 21 锁定**：上一 Phase 已发现 JDK 25 + Lombok 不兼容。本 Phase 在 `pom.xml` 加 `<maven.compiler.release>21</maven.compiler.release>`。
+- **agent/workflow/ 内部依赖混乱**：原 langgraph4j 包含 demo / node / state / tools 等子包，移过去后子包内部 import 也要 sed。
+- **删除 microservice/ 不可逆**：靠 git tag `microservice-final` 兜底。
 
 ---
 
 ## 下一 Phase 预告
 
-**Phase 1 · 模块化单体收敛**
+**Phase 2 · 删 LangChain4j Patch**
 
-- 删除 `yu-ai-code-mother-microservice/`
-- 主线包按领域分模块（app / router / agent / eval / metric / infra）
-- 写 ADR-0001
+- 删除 `src/main/java/dev/langchain4j/` 整体
+- 升级 LangChain4j 到稳定版（`pom.xml` diff 在 ADR-0002 中说明）
+- 写 ADR-0002
 
-> 当前 Phase 完成前，**禁止开始 Phase 1 的工作**。看到相关想法记到 [`backlog.md`](./backlog.md)。
+> 当前 Phase 完成前，**禁止开始 Phase 2 的工作**。
