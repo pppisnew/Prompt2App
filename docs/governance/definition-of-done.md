@@ -22,7 +22,7 @@
 - [ ] `eval/schema/case.schema.yaml` 完成
 - [ ] `eval/cases/` 共 ≥ 25 条 case（HTML 7 / MultiFile 8 / Vue 10）
 - [ ] 每条 case 的 `must_contain` / `must_not_contain` / `llm_judge_dimensions` 完整
-- [ ] 评测执行器（`com.yupi.yuaicodemother.eval.*`）跑通端到端
+- [ ] 评测执行器（`com.prompt2app.eval.*`）跑通端到端
 - [ ] `eval/reports/baseline.md` 已生成（基于现版项目）
 - [ ] ADR-0008 Accepted
 
@@ -31,7 +31,7 @@
 ## Phase 1 · 模块化单体收敛
 
 - [ ] `yu-ai-code-mother-microservice/` 删除（git mv 到 `legacy/` 或直接删，由 ADR-0001 决定）
-- [ ] 主线 `src/main/java/com/yupi/yuaicodemother` 包按领域分模块完成（`app / router / agent / eval / metric / infra`）
+- [ ] 主线 `src/main/java/com/prompt2app` 包按领域分模块完成（`app / router / agent / eval / metric / infra`）
 - [ ] 启动测试通过：`mvn spring-boot:run` 应用能起、健康检查 OK
 - [ ] 评测集回归：分数与 baseline 对比 **不低于 -5%**
 - [ ] ADR-0001 Accepted

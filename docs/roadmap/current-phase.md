@@ -34,16 +34,21 @@
   - [x] 003-todo-app-vue (Vue)
   - [ ] 还需 22 条
 - [ ] 每条 case 的 `must_contain` / `must_not_contain` / `llm_judge_dimensions` 完整
-- [ ] 评测执行器（`com.yupi.yuaicodemother.eval.*`）跑通端到端
+- [ ] 评测执行器（`com.prompt2app.eval.*`）跑通端到端
 - [ ] `eval/reports/baseline.md` 已生成
 - [x] ADR-0008 Accepted
+
+### Phase 0 临时任务（ADR-0009 越界批准）
+
+- [x] 项目重命名为 Prompt2App（包路径 / pom.xml / 主启动类 / README）
+- [x] ADR-0009 Accepted
 
 ---
 
 ## 允许做的事 ✅
 
 - 在 `eval/` 下新增 / 修改 case
-- 在 `eval/` 下编写评测执行器（Java 代码可以新增到 `src/main/java/com/yupi/yuaicodemother/eval/`）
+- 在 `eval/` 下编写评测执行器（Java 代码可以新增到 `src/main/java/com/prompt2app/eval/`）
 - 在 `docs/adr/` 写 ADR-0008 附录或补充
 - 在 `docs/tasks/` 留 Task Record
 - 修文档勘误
@@ -52,7 +57,7 @@
 
 ## 禁止做的事 ❌
 
-- 修改 `src/main/java/com/yupi/yuaicodemother/` 下除 `eval/` 之外的任何业务代码
+- 修改 `src/main/java/com/prompt2app/` 下除 `eval/` 之外的任何业务代码
 - 修改 `yu-ai-code-mother-microservice/` 下任何代码（它在 Phase 1 删除）
 - 修改 `dev/langchain4j/` 下源码覆盖文件（它在 Phase 2 删除）
 - 修改 `pom.xml` 引入新依赖（除非评测执行器需要 + 走 ACP）

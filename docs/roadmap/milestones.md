@@ -37,7 +37,7 @@
 **目标**：删除微服务双份代码，主线包按领域分模块。
 
 - 删除目标：`yu-ai-code-mother-microservice/`（用 git mv 到 legacy/ 或直接 rm，由 ADR-0001 决定）
-- 包重组：`com.yupi.yuaicodemother` → `app / router / agent / eval / metric / infra`
+- 包重组：`com.prompt2app` → `app / router / agent / eval / metric / infra`
 - 关键产出：ADR-0001
 - DoD：见 [`../governance/definition-of-done.md`](../governance/definition-of-done.md#phase-1--模块化单体收敛)
 

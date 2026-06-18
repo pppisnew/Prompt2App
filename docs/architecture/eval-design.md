@@ -34,7 +34,7 @@
 
 ### 待详写
 
-- [ ] 执行器代码组织（`com.yupi.yuaicodemother.eval`）
+- [ ] 执行器代码组织（`com.prompt2app.eval`）
 - [ ] LLM-Judge 的 system prompt 模板
 - [ ] 评分稳定性验证方法（同 case 跑 3 次方差 < 10%）
 - [ ] CI 集成方案（GitHub Actions / 本地 hook）

@@ -15,7 +15,8 @@
 
 ## Phase 1 范围（待 Phase 1 启动时取出）
 
-- _（暂无）_
+- **2026-06-18** · 前端目录重命名：`yu-ai-code-mother-frontend/` → `prompt2app-frontend/`。当前 ADR-0009 决定不动文件系统目录名（避免 break IDE 配置 / 相对路径），Phase 1 与模块化重组一起做。
+- **2026-06-18** · `mvn compile -DskipTests` 兜底验证：在 Phase 1 启动前跑一次，定位 ADR-0009 重命名可能遗漏的字符串残留。
 
 ## Phase 2 范围
 

@@ -20,6 +20,7 @@
 | # | 标题 | 状态 | 相关 Phase |
 | --- | --- | --- | --- |
 | [0008](./0008-evaluation-first.md) | 重构开始之前先建立评测集 | Accepted | Phase 0 |
+| [0009](./0009-project-rename-to-prompt2app.md) | 项目重命名为 Prompt2App（含 Java 包路径迁移） | Accepted | Phase 0（越界批准） |
 | 0001 | 从微服务回退到模块化单体 | _待写_ | Phase 1 |
 | 0002 | 删除 LangChain4j 源码覆盖包 | _待写_ | Phase 2 |
 | 0003 | AI Router 采用规则 + LLM 兜底两层架构 | _待写_ | Phase 4 |

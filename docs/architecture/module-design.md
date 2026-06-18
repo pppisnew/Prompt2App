@@ -8,7 +8,7 @@
 
 ## 待写内容（Phase 1 完成时填充）
 
-- [ ] 包结构最终方案（`com.yupi.yuaicodemother.{app, router, agent, eval, metric, infra}`）
+- [ ] 包结构最终方案（`com.prompt2app.{app, router, agent, eval, metric, infra}`）
 - [ ] 每个模块的职责定义
 - [ ] 模块间允许的依赖方向（用 ArchUnit 守护？延后决定）
 - [ ] 横向能力（infra）与领域模块的关系
