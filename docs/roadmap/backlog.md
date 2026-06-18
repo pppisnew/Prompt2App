@@ -16,7 +16,9 @@
 ## Phase 1 范围（待 Phase 1 启动时取出）
 
 - **2026-06-18** · 前端目录重命名：`yu-ai-code-mother-frontend/` → `prompt2app-frontend/`。当前 ADR-0009 决定不动文件系统目录名（避免 break IDE 配置 / 相对路径），Phase 1 与模块化重组一起做。
-- **2026-06-18** · `mvn compile -DskipTests` 兜底验证：在 Phase 1 启动前跑一次，定位 ADR-0009 重命名可能遗漏的字符串残留。
+- **2026-06-18** · `mvn compile -DskipTests` 兜底验证：~~在 Phase 1 启动前跑一次~~ ✅ 已在 Phase 0 evaluator 任务中跑通（JDK 21 + Lombok + 包重命名后），191 class 全部产出。
+- **2026-06-18** · **JDK 版本锁定**：本机 brew 默认 JDK 25 与 Lombok 不兼容；当前依赖 JDK 21（`/opt/homebrew/Cellar/openjdk@21`）。Phase 1 应在 `pom.xml` 加 `<maven.compiler.release>21</maven.compiler.release>`，并在 README / docs/architecture/system-overview.md 写明本地开发要求。
+- **2026-06-18** · **接入真 `AgentInvoker`**：当前 evaluator 走 stub。Phase 1 模块化重组完成、Phase 2 删 langchain4j patch 之后，写一个 `DirectServiceAgentInvoker` 直接注入 `AiCodeGeneratorService`，让 `mvn test -Dtest=EvalRunnerSmokeTest` 默认仍走 stub，但提供 `EvalRunnerLiveTest`（@DisabledIfEnvironmentVariable）跑真 LLM。
 
 ## Phase 2 范围
 

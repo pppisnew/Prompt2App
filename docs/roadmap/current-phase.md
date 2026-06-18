@@ -8,9 +8,9 @@
 
 **Phase 0 · 评测基线**
 
-- **状态**：In Progress
+- **状态**：✅ DoD 全部勾选（待 Phase 1 启动前回看一次）
 - **开始日期**：2026-06-18
-- **预计完成**：2026-06-19（2 工作日）
+- **完成日期**：2026-06-18（一天内完成，含越界重命名）
 - **责任人**：项目作者
 
 ---
@@ -33,8 +33,8 @@
   - [x] 002, 010-016：MultiFile 8 条
   - [x] 003, 017-025：Vue 10 条
 - [x] 每条 case 的 `must_contain` / `must_not_contain` / `llm_judge_dimensions` 完整
-- [ ] 评测执行器（`com.prompt2app.eval.*`）跑通端到端
-- [ ] `eval/reports/baseline.md` 已生成
+- [x] 评测执行器（`com.prompt2app.eval.*`）跑通端到端 ✅（stub mode，9/9 测试通过）
+- [x] `eval/reports/baseline.md` 已生成 ✅（结构性 baseline，stub 模式产物）
 - [x] ADR-0008 Accepted
 
 ### Phase 0 临时任务（ADR-0009 越界批准）
