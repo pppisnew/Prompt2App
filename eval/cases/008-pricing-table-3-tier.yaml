@@ -1,0 +1,34 @@
+id: "008-pricing-table-3-tier"
+title: "三档定价对比表"
+difficulty: easy
+expected_strategy: HTML
+tags:
+  - pricing
+  - table
+  - comparison
+
+prompt: |
+  做一个三档定价对比页：免费版 0 元、专业版 ¥99/月、团队版 ¥299/月。
+  每档列出 4-6 项功能，专业版高亮"最受欢迎"。
+
+rubric:
+  must_contain:
+    - "免费版"
+    - "专业版"
+    - "团队版"
+    - "¥99"
+    - "¥299"
+    - "最受欢迎"
+    - "viewport"
+  must_not_contain:
+    - "lorem ipsum"
+    - "TODO"
+    - "请补充功能"
+  llm_judge_dimensions:
+    - "三栏并排布局清晰，移动端可堆叠"
+    - "专业版有视觉高亮（边框 / 阴影 / 角标）"
+    - "每档功能列表至少 4 项且区分明显（X / ✓ 或图标）"
+
+notes: |
+  Pricing 是 SaaS 必备页面。考察生成器是否能"自补"功能项（用户没给就要自己想合理的）。
+  常见失败：每档功能数量不一致 / 没有视觉强调 / 移动端断不掉。

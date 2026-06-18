@@ -1,0 +1,40 @@
+id: "011-bookstore-multipage"
+title: "独立书店 5 页静态站"
+difficulty: medium
+expected_strategy: MULTI_FILE
+tags:
+  - bookstore
+  - multipage
+  - listing
+
+prompt: |
+  做一个独立书店"角隅"的 5 页静态网站：
+  - 首页：店铺故事 + 本月推荐书 3 本（封面占位 + 简介）
+  - 书目页：列表展示至少 12 本书，含书名、作者、价格、分类标签
+  - 活动页：3 个即将到来的读书会，含时间、地点、报名方式
+  - 关于页：店主介绍、书店历史
+  - 联系页：地址、营业时间、地图占位、电话、邮箱
+  纸质温暖风格、米色 + 棕色，衬线字体。
+
+rubric:
+  must_contain:
+    - "角隅"
+    - "书目"
+    - "活动"
+    - "<nav"
+    - "href"
+  must_not_contain:
+    - "lorem ipsum"
+    - "TODO"
+    - "Coming soon"
+    - "<!-- placeholder -->"
+  llm_judge_dimensions:
+    - "5 个页面文件，nav 位置和样式一致"
+    - "书目页 ≥ 12 本书，每本含 4 字段"
+    - "米色/棕色主色 + 衬线字体实际生效"
+    - "活动页 3 个事件信息完整"
+  min_files: 5
+
+notes: |
+  比 002 难一档：5 页 + 列表数据更多。考察生成器是否会偷懒只列 5-6 本书。
+  must_not_contain 强化"placeholder"过滤——书目最容易被 lorem 化。

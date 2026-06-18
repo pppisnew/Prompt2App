@@ -1,0 +1,46 @@
+id: "022-recipe-search-vue"
+title: "菜谱搜索 Vue 应用"
+difficulty: hard
+expected_strategy: VUE_PROJECT
+tags:
+  - vue
+  - search
+  - filter
+  - mock-data
+
+prompt: |
+  做一个菜谱搜索 Vue 3 应用（Composition API）：
+  1. 内置至少 20 个菜谱的 mock 数据（在 src/data/recipes.js），每个菜谱含：名称、菜系（川/粤/鲁/淮扬/西式）、
+     难度（易/中/难）、烹饪时间（分钟）、用料数组、步骤数组、图片占位 URL；
+  2. 顶部搜索框：模糊匹配名称（实时过滤）；
+  3. 侧边栏筛选：菜系（多选 checkbox）、难度（单选 radio）、最大烹饪时间（slider 0-180 分钟）；
+  4. 主区域网格展示匹配菜谱卡片，含名称/菜系标签/难度/时间；
+  5. 点击卡片打开详情 modal，展示用料和步骤；
+  6. 顶部 toggle 切换网格/列表视图；
+  7. 搜索结果数量实时显示（"找到 N 个菜谱"）；
+  8. 浅色温暖配色。
+
+rubric:
+  must_contain:
+    - "package.json"
+    - "vue"
+    - "ref"
+    - "computed"
+    - "checkbox"
+    - "type=\"range\""
+  must_not_contain:
+    - "TODO"
+    - "options API"
+    - "// mock TBD"
+  llm_judge_dimensions:
+    - "mock 数据 ≥ 20 条且字段完整"
+    - "搜索 + 三类筛选组合工作（computed 派生过滤结果）"
+    - "网格/列表视图切换"
+    - "详情 modal 内容齐全"
+    - "结果数量随筛选变化"
+    - "数据 / 组件 / composable 分层"
+  min_files: 6
+
+notes: |
+  考察"多筛选条件组合"的 computed 派生能力。
+  常见失败：mock 数据少于 20 / 多筛选条件组合错误 / slider 无效。

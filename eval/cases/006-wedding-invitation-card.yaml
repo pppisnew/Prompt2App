@@ -1,0 +1,33 @@
+id: "006-wedding-invitation-card"
+title: "婚礼邀请函页面"
+difficulty: easy
+expected_strategy: HTML
+tags:
+  - invitation
+  - typography
+  - print-friendly
+
+prompt: |
+  做一张婚礼邀请函网页：新郎张伟、新娘李雪，2026 年 10 月 5 日下午 6 点，
+  上海外滩 W 酒店。米白底、衬线字体、装饰花纹。底部 RSVP 留个邮箱地址 rsvp@example.com。
+
+rubric:
+  must_contain:
+    - "张伟"
+    - "李雪"
+    - "2026"
+    - "10"
+    - "上海"
+    - "rsvp@example.com"
+    - "viewport"
+  must_not_contain:
+    - "lorem ipsum"
+    - "TODO"
+  llm_judge_dimensions:
+    - "衬线字体（Playfair / Cormorant / 类似）实际生效"
+    - "米白底色 + 装饰元素呈现"
+    - "信息层次：姓名 > 日期 > 地点 > RSVP"
+
+notes: |
+  考察"风格指令"是否被遵守。常见失败：忽略"米白 + 衬线"诉求，套默认蓝色 sans-serif。
+  时间 "下午 6 点" 可以容忍多种表达（18:00 / 6:00 PM / 下午 6 点），所以不在 must_contain。

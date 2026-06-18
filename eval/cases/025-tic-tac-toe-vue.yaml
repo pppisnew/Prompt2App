@@ -1,0 +1,44 @@
+id: "025-tic-tac-toe-vue"
+title: "井字棋 Vue 应用"
+difficulty: hard
+expected_strategy: VUE_PROJECT
+tags:
+  - vue
+  - game
+  - ai
+  - state
+
+prompt: |
+  做一个井字棋 Vue 3 应用（Composition API），含简易 AI 对手：
+  1. 3x3 棋盘，玩家执 X 先手，AI 执 O；
+  2. AI 策略：① 如果有一步可赢就走该步；② 否则如果对方一步可赢就堵；③ 否则随机走空格；
+  3. 实时显示当前轮到谁；
+  4. 胜负判定：3 连成线高亮显示，弹出"X 胜利/O 胜利/平局"；
+  5. 重新开始按钮：重置棋盘 + 玩家先手；
+  6. 对局历史：右侧记录最近 5 局结果（X 胜/O 胜/平局 + 用时）；
+  7. 暗色主题、霓虹蓝/品红双色；
+  8. 不允许使用任何 game 库，AI 算法和判定都自己写。
+
+rubric:
+  must_contain:
+    - "package.json"
+    - "vue"
+    - "ref"
+    - "computed"
+    - "X 胜利"
+  must_not_contain:
+    - "TODO"
+    - "options API"
+    - "minimax"
+  llm_judge_dimensions:
+    - "AI 三档策略实际生效（赢 > 堵 > 随机）"
+    - "胜负判定覆盖 8 条线（3 横 3 竖 2 斜）"
+    - "3 连线高亮"
+    - "对局历史 5 条且能重新开始时刷新"
+    - "暗色霓虹主题实际呈现"
+  min_files: 4
+
+notes: |
+  考察"小型 AI 对手 + 胜负判定"两个算法点。
+  must_not_contain 不要 minimax——题目说简易 AI（贪心三档策略），过度工程化反而扣分。
+  常见失败：AI 第一步乱走（应该有"可赢必走"的优先级）、判定漏斜线。

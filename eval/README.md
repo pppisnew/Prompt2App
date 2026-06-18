@@ -9,10 +9,32 @@ eval/
 ├── README.md                  # 本文件
 ├── schema/
 │   └── case.schema.yaml       # 评测 case 字段定义
-├── cases/                     # 评测集（v0 目标 25 条，HTML 7 / MultiFile 8 / Vue 10）
-│   ├── 001-personal-resume-page.yaml
-│   ├── 002-coffee-shop-multipage.yaml
-│   └── 003-todo-app-vue.yaml
+├── cases/                     # 评测集 v0（25/25 ✅，HTML 7 / MultiFile 8 / Vue 10）
+│   ├── 001-personal-resume-page.yaml          (HTML, easy)
+│   ├── 002-coffee-shop-multipage.yaml         (MultiFile, medium)
+│   ├── 003-todo-app-vue.yaml                  (Vue, hard)
+│   ├── 004-saas-landing-hero.yaml             (HTML, easy)
+│   ├── 005-error-404-page.yaml                (HTML, easy)
+│   ├── 006-wedding-invitation-card.yaml       (HTML, easy)
+│   ├── 007-coming-soon-launch.yaml            (HTML, easy)
+│   ├── 008-pricing-table-3-tier.yaml          (HTML, easy)
+│   ├── 009-recipe-card-printable.yaml         (HTML, easy)
+│   ├── 010-photographer-portfolio.yaml        (MultiFile, medium)
+│   ├── 011-bookstore-multipage.yaml           (MultiFile, medium)
+│   ├── 012-tech-conference-site.yaml          (MultiFile, medium)
+│   ├── 013-restaurant-bistro-site.yaml        (MultiFile, medium)
+│   ├── 014-ngo-charity-site.yaml              (MultiFile, medium)
+│   ├── 015-university-cs-program.yaml         (MultiFile, medium)
+│   ├── 016-product-launch-microsite.yaml      (MultiFile, medium)
+│   ├── 017-weather-dashboard-vue.yaml         (Vue, hard)
+│   ├── 018-markdown-editor-vue.yaml           (Vue, hard)
+│   ├── 019-pomodoro-timer-vue.yaml            (Vue, hard)
+│   ├── 020-expense-tracker-vue.yaml           (Vue, hard)
+│   ├── 021-kanban-board-vue.yaml              (Vue, hard)
+│   ├── 022-recipe-search-vue.yaml             (Vue, hard)
+│   ├── 023-quiz-app-vue.yaml                  (Vue, hard)
+│   ├── 024-url-shortener-vue.yaml             (Vue, hard)
+│   └── 025-tic-tac-toe-vue.yaml               (Vue, hard)
 └── reports/                   # 每次跑评测的产物
     └── baseline.md            # （待跑）重构前的基线快照
 ```
@@ -42,8 +64,7 @@ eval/
 ## v0 完成标准
 
 - [x] schema 定义
-- [x] 3 条示范 case（HTML/MultiFile/Vue 各 1）
-- [ ] 补齐到 25 case（HTML 7 / MultiFile 8 / Vue 10）
-- [ ] 评测执行器（`com.yupi.yuaicodemother.eval` 包，Phase 0 末尾完成）
+- [x] 25 case（HTML 7 / MultiFile 8 / Vue 10）✅
+- [ ] 评测执行器（`com.prompt2app.eval` 包，Phase 0 末尾完成）
 - [ ] 跑通基线，写入 `reports/baseline.md`
 - [ ] 后续每个 Phase 完成后追加一份 `reports/phase-N.md`

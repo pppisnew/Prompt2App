@@ -1,0 +1,44 @@
+id: "017-weather-dashboard-vue"
+title: "天气仪表盘 Vue 应用"
+difficulty: hard
+expected_strategy: VUE_PROJECT
+tags:
+  - vue
+  - dashboard
+  - state
+  - api-mock
+
+prompt: |
+  做一个天气仪表盘 Vue 3 应用（Composition API）：
+  1. 顶部输入城市名搜索；
+  2. 主区域显示当前天气：温度、天气图标（emoji 或 svg）、湿度、风速；
+  3. 下方一行 7 天预报卡片，每张含日期、最高/最低温、天气图标；
+  4. 切换"摄氏/华氏"开关，单位显示同步切换；
+  5. 数据使用 mock 数据（在 src/api 或 utils 中维护至少 3 个城市的假数据）；
+  6. 切换城市时温度数字有过渡动画（CSS transition 即可）；
+  7. 整体使用毛玻璃卡片 + 渐变背景，移动端友好。
+
+rubric:
+  must_contain:
+    - "package.json"
+    - "vue"
+    - "ref"
+    - "computed"
+    - "transition"
+    - "摄氏"
+    - "华氏"
+  must_not_contain:
+    - "TODO"
+    - "options API"
+    - "// 待补充"
+  llm_judge_dimensions:
+    - "搜索/显示/7 天/单位切换 4 项功能均可工作"
+    - "mock 数据组织合理（至少 3 城市，结构一致）"
+    - "组件拆分合理（不全塞 App.vue）"
+    - "毛玻璃卡片 + 渐变背景实际呈现"
+    - "移动端不溢出、卡片可堆叠"
+  min_files: 5
+
+notes: |
+  典型 dashboard 类应用。考察 Vue 状态管理（ref + computed）+ 模拟 API 数据组织。
+  常见失败：搜索框无效 / 单位切换没真切换显示数字 / mock 数据少于 3 个城市。

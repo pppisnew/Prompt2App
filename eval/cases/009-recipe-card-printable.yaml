@@ -1,0 +1,35 @@
+id: "009-recipe-card-printable"
+title: "可打印的菜谱卡"
+difficulty: easy
+expected_strategy: HTML
+tags:
+  - recipe
+  - print
+  - layout
+
+prompt: |
+  做一张番茄牛腩面的菜谱卡，包含：用料（至少 8 项含克数）、步骤（至少 5 步）、
+  烹饪时间 90 分钟、份量 3 人份。简洁可打印风格，A4 比例。
+
+rubric:
+  must_contain:
+    - "番茄牛腩面"
+    - "用料"
+    - "步骤"
+    - "90"
+    - "3 人份"
+    - "克"
+    - "@media print"
+    - "viewport"
+  must_not_contain:
+    - "lorem ipsum"
+    - "TODO"
+  llm_judge_dimensions:
+    - "用料部分至少 8 项，每项含克数"
+    - "步骤部分至少 5 步，编号清晰"
+    - "@media print CSS 实际隔离屏幕样式"
+    - "整体留白足够，A4 上不溢出"
+
+notes: |
+  考察"打印样式"这一专门 CSS 能力。must_contain 强制 @media print，
+  否则只是普通页面没满足"可打印"诉求。常见失败：忘了 print 媒体查询、克数被简化为整数。

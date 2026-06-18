@@ -1,0 +1,46 @@
+id: "018-markdown-editor-vue"
+title: "Markdown 实时预览编辑器 Vue"
+difficulty: hard
+expected_strategy: VUE_PROJECT
+tags:
+  - vue
+  - editor
+  - markdown
+  - split-view
+
+prompt: |
+  做一个 Markdown 编辑器 Vue 3 应用（Composition API）：
+  1. 左右分栏：左侧 textarea 编辑，右侧实时渲染预览；
+  2. 支持基础 markdown：标题、粗体、斜体、列表、链接、代码块、引用、分割线；
+  3. 工具栏 8 个按钮（粗体/斜体/H1/列表/链接/代码/引用/分割线）：点击后在光标处插入对应语法；
+  4. 字数统计实时显示在底部状态栏；
+  5. 内容自动持久化到 localStorage，刷新不丢；
+  6. 支持深浅主题切换（顶部按钮）；
+  7. 不允许引入 marked / markdown-it 等库，自己手写一个简单的 markdown 解析（覆盖列出的语法即可）。
+
+rubric:
+  must_contain:
+    - "package.json"
+    - "vue"
+    - "ref"
+    - "watch"
+    - "localStorage"
+    - "textarea"
+  must_not_contain:
+    - "TODO"
+    - "marked"
+    - "markdown-it"
+    - "options API"
+  llm_judge_dimensions:
+    - "左右分栏布局清晰"
+    - "工具栏 8 个按钮全部插入正确语法"
+    - "实时预览（输入即更新，无明显延迟）"
+    - "localStorage 读写在 mount 与 watch 中正确"
+    - "深浅主题切换全局生效"
+    - "自己手写的 markdown 解析覆盖 7 种语法"
+  min_files: 5
+
+notes: |
+  考察"明确禁止依赖"的能力——must_not_contain 强制不准用 marked/markdown-it。
+  这是高难度 case：需要写正则解析 + 反应式预览 + 工具栏插入 + 持久化 + 主题切换。
+  常见失败：偷偷引入 markdown-it / 工具栏只是装饰不真插入 / 主题切换没覆盖所有元素。

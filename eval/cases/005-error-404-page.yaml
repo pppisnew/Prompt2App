@@ -1,0 +1,30 @@
+id: "005-error-404-page"
+title: "404 错误页"
+difficulty: easy
+expected_strategy: HTML
+tags:
+  - error-page
+  - utility
+
+prompt: |
+  做一个有趣的 404 错误页，主标题"页面在宇宙里走丢了"，配一段安慰文案，
+  一个返回首页的按钮。现代极简风格，居中布局。
+
+rubric:
+  must_contain:
+    - "404"
+    - "页面在宇宙里走丢了"
+    - "返回首页"
+    - "viewport"
+  must_not_contain:
+    - "lorem ipsum"
+    - "TODO"
+    - "请填充"
+  llm_judge_dimensions:
+    - "整体居中且垂直居中"
+    - "404 字号显著大于其他文字"
+    - "返回按钮可点击外观清晰"
+
+notes: |
+  最简单的 utility 页面。目的：检验生成器是否会无故引入复杂结构（应该只有一段 hero 区域）。
+  常见失败：硬塞表单、加无关页脚等。

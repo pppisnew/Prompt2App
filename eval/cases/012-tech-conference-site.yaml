@@ -1,0 +1,40 @@
+id: "012-tech-conference-site"
+title: "技术大会 4 页站"
+difficulty: medium
+expected_strategy: MULTI_FILE
+tags:
+  - conference
+  - event
+  - schedule
+
+prompt: |
+  做"AI Frontier 2026"技术大会的官网，4 个页面：
+  - 首页：大会主题、时间地点（2026-09-12 至 14，北京）、CTA 立即报名
+  - 议程页：3 天议程表，每天至少 6 个时间段，含演讲者和主题
+  - 嘉宾页：至少 9 位嘉宾，含头像占位、姓名、公司、议题
+  - 报名页：报名表单（姓名/公司/邮箱/票种），三档票价
+  现代科技感、深蓝 + 高对比度。
+
+rubric:
+  must_contain:
+    - "AI Frontier 2026"
+    - "2026-09-12"
+    - "议程"
+    - "嘉宾"
+    - "报名"
+    - "<form"
+    - "<nav"
+  must_not_contain:
+    - "lorem ipsum"
+    - "TODO"
+    - "Coming soon"
+  llm_judge_dimensions:
+    - "议程页 3 天 × 6+ 时间段，结构清晰"
+    - "嘉宾页 ≥ 9 位且每位 4 字段完整"
+    - "报名表单字段齐全（含三档票种 radio/select）"
+    - "深蓝主色 + 现代感配色"
+  min_files: 4
+
+notes: |
+  会议站是高密度信息展示。考察生成器是否能"自己想象"合理的议程内容（讲者+议题），
+  常见失败：议程时间段空洞 / 嘉宾少于 9 位 / 票价档位缺失。

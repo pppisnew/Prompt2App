@@ -1,0 +1,41 @@
+id: "014-ngo-charity-site"
+title: "公益组织 5 页站"
+difficulty: medium
+expected_strategy: MULTI_FILE
+tags:
+  - ngo
+  - charity
+  - donation
+
+prompt: |
+  为公益组织"绿芽计划"（关注乡村儿童阅读）做 5 页站：
+  - 首页：使命陈述、3 个核心数据（已建图书馆数量、覆盖儿童数量、捐赠人次）
+  - 项目页：3 个在做的项目，每个含目标、地点、当前进度条
+  - 故事页：3 篇受益儿童故事，每篇 100 字以内
+  - 捐赠页：4 档捐赠金额选项 + 自定义金额 + 表单
+  - 关于页：团队、合作伙伴、财务公开链接占位
+  绿色 + 米色，温暖叙事感。
+
+rubric:
+  must_contain:
+    - "绿芽计划"
+    - "项目"
+    - "故事"
+    - "捐赠"
+    - "<form"
+    - "<nav"
+    - "progress"
+  must_not_contain:
+    - "lorem ipsum"
+    - "TODO"
+    - "<!-- 待填 -->"
+  llm_judge_dimensions:
+    - "首页 3 个核心数据有显著数字"
+    - "项目页 3 个项目均有进度可视化"
+    - "故事页 3 篇每篇 ≥80 字真实感"
+    - "捐赠页 4 档 + 自定义金额"
+  min_files: 5
+
+notes: |
+  公益叙事比纯商业站更难——需要"真实感"。考察生成器是否会写出空洞口号。
+  must_contain 含 progress（HTML 进度条元素）但允许 div 实现，靠 LLM-Judge 抓质量。

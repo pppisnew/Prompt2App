@@ -1,0 +1,40 @@
+id: "015-university-cs-program"
+title: "大学计算机系 4 页站"
+difficulty: medium
+expected_strategy: MULTI_FILE
+tags:
+  - education
+  - university
+  - program
+
+prompt: |
+  做某大学计算机系的 4 页站：
+  - 首页：系简介、两个亮点项目（人工智能实验室、ACM 校队）、招生通道入口
+  - 师资页：至少 8 位教授，含照片占位、研究方向、邮箱
+  - 课程页：本科 4 年课程表，按学期分组，每学期至少 5 门课
+  - 招生页：本科/硕士/博士三档申请要求 + 联系方式
+  学术蓝 + 白底，规整严肃风格。
+
+rubric:
+  must_contain:
+    - "计算机"
+    - "师资"
+    - "课程"
+    - "招生"
+    - "本科"
+    - "硕士"
+    - "博士"
+    - "<nav"
+  must_not_contain:
+    - "lorem ipsum"
+    - "TODO"
+  llm_judge_dimensions:
+    - "师资页 ≥8 位且 3 字段完整"
+    - "课程页 4 学期 × 5+ 门课"
+    - "招生页三档要求清晰区分"
+    - "学术蓝主色 + 严肃布局"
+  min_files: 4
+
+notes: |
+  教育类站点信息密度高。考察生成器是否会简化（只给 3-4 位教授）。
+  常见失败：课程表写"高等数学等"省略具体课名 / 师资数量不达标。

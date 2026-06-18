@@ -1,0 +1,40 @@
+id: "013-restaurant-bistro-site"
+title: "法式小餐馆 4 页站"
+difficulty: medium
+expected_strategy: MULTI_FILE
+tags:
+  - restaurant
+  - menu
+  - reservation
+
+prompt: |
+  给法式小餐馆"Petit Bistro"做 4 页静态站：
+  - 首页：氛围介绍、招牌菜 3 道展示
+  - 菜单页：分前菜/主菜/甜点/酒水四类，每类至少 5 道，含中文名、法语原名、价格
+  - 主厨页：主厨 Jean 简介、料理理念、3 段获奖经历
+  - 预订页：预订表单（日期/时间/人数/姓名/电话）
+  奶油色 + 酒红、衬线字体、复古插画感。
+
+rubric:
+  must_contain:
+    - "Petit Bistro"
+    - "Jean"
+    - "前菜"
+    - "主菜"
+    - "甜点"
+    - "<form"
+    - "<nav"
+  must_not_contain:
+    - "lorem ipsum"
+    - "TODO"
+    - "<!-- placeholder -->"
+  llm_judge_dimensions:
+    - "菜单 4 类 × 每类 ≥5 道，含中法双语"
+    - "主厨页 3 段获奖经历清晰"
+    - "预订表单 5 个字段齐全"
+    - "奶油色/酒红主色 + 衬线字体"
+  min_files: 4
+
+notes: |
+  考察"双语菜单"的细节遵守。常见失败：只给中文 / 法语机翻不准 / 类目缺失。
+  must_contain 不强制法语字符（避免编码问题），靠 LLM-Judge 抓双语。

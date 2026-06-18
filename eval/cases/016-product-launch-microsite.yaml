@@ -1,0 +1,41 @@
+id: "016-product-launch-microsite"
+title: "硬件产品发布微站"
+difficulty: medium
+expected_strategy: MULTI_FILE
+tags:
+  - product
+  - launch
+  - hardware
+
+prompt: |
+  为新款无线耳机"Echo Pro"做 4 页发布微站：
+  - 首页：超大产品图占位 + 三句话亮点 + 预订按钮
+  - 特性页：6 个核心特性（降噪、续航 36 小时、空间音频、低延迟、自适应 EQ、IPX5），
+    每个特性一段 60 字解释 + 数据可视化
+  - 参数页：完整规格表（重量、电池、蓝牙版本、驱动单元、频响范围、佩戴方式 等至少 10 项）
+  - 预订页：3 配色选择 + 表单（姓名/邮箱/期望发货地区）
+  极简白底 + 一点高饱和强调色。
+
+rubric:
+  must_contain:
+    - "Echo Pro"
+    - "降噪"
+    - "36 小时"
+    - "空间音频"
+    - "IPX5"
+    - "<form"
+    - "<nav"
+  must_not_contain:
+    - "lorem ipsum"
+    - "TODO"
+    - "<!-- placeholder -->"
+  llm_judge_dimensions:
+    - "特性页 6 个特性卡片排版清晰"
+    - "参数表 ≥10 项"
+    - "3 配色选择有视觉区分（圆点/缩略图）"
+    - "极简白底 + 高饱和强调色实际生效"
+  min_files: 4
+
+notes: |
+  典型苹果式发布微站。考察生成器是否能"自补"参数（用户没给频响范围数值，要合理编一个）。
+  常见失败：特性卡片字数不足、参数表项不达标。

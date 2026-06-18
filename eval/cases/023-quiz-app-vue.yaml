@@ -1,0 +1,43 @@
+id: "023-quiz-app-vue"
+title: "知识竞赛 Quiz Vue 应用"
+difficulty: hard
+expected_strategy: VUE_PROJECT
+tags:
+  - vue
+  - quiz
+  - state-machine
+  - timer
+
+prompt: |
+  做一个知识竞赛 Vue 3 应用（Composition API）：
+  1. 内置至少 10 道选择题 mock 数据（在 src/data/questions.js），每题含：题干、4 个选项、正确答案索引、解析；
+  2. 开始页：欢迎语 + 开始按钮 + 难度选择（简单 5 题/中等 8 题/困难 10 题）；
+  3. 答题页：当前进度（第 N/M 题）、题干、4 个选项按钮、30 秒倒计时（超时自动跳下一题）；
+  4. 选择后立即反馈（绿色对/红色错），1.5 秒后自动跳下一题；
+  5. 结果页：得分、用时、错题列表（展示题干 + 你的答案 + 正确答案 + 解析）、再来一次按钮；
+  6. 全程使用浅色主题，进度条卡片样式。
+
+rubric:
+  must_contain:
+    - "package.json"
+    - "vue"
+    - "ref"
+    - "setInterval"
+    - "computed"
+    - "解析"
+  must_not_contain:
+    - "TODO"
+    - "options API"
+    - "// 答案 TBD"
+  llm_judge_dimensions:
+    - "mock 题目 ≥ 10 题且字段完整"
+    - "三档难度切换实际生效（题目数变化）"
+    - "30 秒倒计时 + 超时跳题"
+    - "答题反馈视觉清晰（绿/红）+ 自动跳"
+    - "结果页错题列表完整展示"
+    - "状态机：开始 → 答题 → 结果 三页转换无 bug"
+  min_files: 5
+
+notes: |
+  考察"页面状态机"+"倒计时副作用"。
+  常见失败：倒计时不归零、错题列表丢字段、再来一次没重置状态。

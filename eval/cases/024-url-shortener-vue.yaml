@@ -1,0 +1,43 @@
+id: "024-url-shortener-vue"
+title: "短链生成器 Vue 应用"
+difficulty: hard
+expected_strategy: VUE_PROJECT
+tags:
+  - vue
+  - utility
+  - clipboard
+  - history
+
+prompt: |
+  做一个短链生成器 Vue 3 应用（Composition API）：
+  1. 输入框接收原始 URL，下方按钮"生成短链"；
+  2. 生成逻辑：本地随机 6 位字母数字 hash（不需要真实可访问，但格式如 https://prm.app/Ab3xY9）；
+  3. URL 格式校验（不合法时输入框红边框 + 错误提示）；
+  4. 生成后显示短链 + 一键复制按钮（Clipboard API），复制成功 toast 提示；
+  5. 历史记录列表：保留最近 10 条，每条含原 URL（可截断）、短链、生成时间、删除按钮；
+  6. 全部数据持久化到 localStorage；
+  7. 顶部统计：今日生成数、累计生成数；
+  8. 极简白底 + 蓝色主色。
+
+rubric:
+  must_contain:
+    - "package.json"
+    - "vue"
+    - "ref"
+    - "navigator.clipboard"
+    - "localStorage"
+    - "https://"
+  must_not_contain:
+    - "TODO"
+    - "options API"
+  llm_judge_dimensions:
+    - "URL 校验真起作用（不合法时阻止生成）"
+    - "Clipboard API 调用 + 成功 toast"
+    - "历史保留最近 10 条且能删"
+    - "今日 / 累计 两个统计用 computed 派生"
+    - "组件拆分（InputCard / HistoryList / StatsBar）"
+  min_files: 5
+
+notes: |
+  考察 Clipboard API 与 toast 反馈机制。
+  常见失败：复制按钮装饰性、历史只是 push 不限制 10 条、URL 校验形同虚设。

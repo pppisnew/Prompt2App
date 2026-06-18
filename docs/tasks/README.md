@@ -23,3 +23,4 @@ YYYY-MM-DD-<phase>-<slug>.md
 | --- | --- | --- | --- | --- |
 | 2026-06-18 | Phase 0 | [项目治理体系与评测骨架搭建](./2026-06-18-phase0-bootstrap.md) | 项目作者 + AI | ✅ 完成 |
 | 2026-06-18 | Phase 0（越界） | [项目重命名为 Prompt2App](./2026-06-18-phase0-rename-to-prompt2app.md) | 项目作者 + AI | ✅ 完成 |
+| 2026-06-18 | Phase 0 | [补齐评测集 v0 至 25 条 case](./2026-06-18-phase0-fill-eval-cases.md) | 项目作者 + AI | ✅ 完成 |

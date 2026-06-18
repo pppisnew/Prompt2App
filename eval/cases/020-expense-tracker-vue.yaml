@@ -1,0 +1,47 @@
+id: "020-expense-tracker-vue"
+title: "记账本 Vue 应用"
+difficulty: hard
+expected_strategy: VUE_PROJECT
+tags:
+  - vue
+  - crud
+  - chart
+  - filter
+
+prompt: |
+  做一个个人记账本 Vue 3 应用（Composition API）：
+  1. 新增记录：金额、类型（收入/支出）、分类（餐饮/交通/购物/工资/其他）、备注、日期；
+  2. 列表展示所有记录，按日期倒序，可按"类型/分类"筛选；
+  3. 顶部仪表盘：本月收入、本月支出、本月结余三个数字卡片；
+  4. 一个简单饼图展示本月支出分类占比（自己用 SVG 或 div+css 实现，禁止 chart.js / echarts）；
+  5. 删除记录需二次确认；
+  6. 数据持久化到 localStorage；
+  7. 移动端友好，浅色主题。
+
+rubric:
+  must_contain:
+    - "package.json"
+    - "vue"
+    - "ref"
+    - "computed"
+    - "localStorage"
+    - "餐饮"
+    - "<svg"
+  must_not_contain:
+    - "TODO"
+    - "chart.js"
+    - "echarts"
+    - "options API"
+  llm_judge_dimensions:
+    - "新增/删除/筛选 3 项 CRUD 完整"
+    - "本月收入/支出/结余三个数字 computed 派生"
+    - "饼图 SVG 实际按数据生成（不是固定图）"
+    - "二次确认对话框存在（modal 或 confirm）"
+    - "localStorage 读写在 watch 中触发"
+    - "组件拆分（FormCard / ListCard / ChartCard 等）"
+  min_files: 6
+
+notes: |
+  典型 CRUD + 数据可视化的综合 case。
+  must_not_contain 禁止图表库强制自己实现 SVG 饼图——考察 path / d 属性的几何计算能力。
+  常见失败：饼图是写死的图 / 筛选功能没实际生效 / 没分组件全塞 App.vue。

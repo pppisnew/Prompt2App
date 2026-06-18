@@ -8,7 +8,7 @@
 
 | Phase | 名称 | 工时 | 状态 | 关键产出 | 面试价值 |
 | --- | --- | --- | --- | --- | --- |
-| **0** | 评测基线 | 2d | 🟡 In Progress | 25 case + baseline 报告 | ⭐⭐⭐⭐⭐ |
+| **0** | 评测基线 | 2d | 🟡 In Progress | 25 case ✅ + 项目重命名（越界 ADR-0009）✅ + baseline 报告（待跑） | ⭐⭐⭐⭐⭐ |
 | **1** | 模块化单体收敛 | 2d | ⚪ Pending | ADR-0001 + 删除 microservice | ⭐⭐⭐ |
 | **2** | 删 LangChain4j Patch | 2d | ⚪ Pending | ADR-0002 + 框架升级 | ⭐⭐⭐⭐ |
 | **3** | Tool 安全体系 | 4d | ⚪ Pending | ADR-0004 + 20 单测 | ⭐⭐⭐⭐⭐ |
@@ -114,3 +114,5 @@
 | 日期 | Phase | 旧状态 | 新状态 | 备注 |
 | --- | --- | --- | --- | --- |
 | 2026-06-18 | Phase 0 | Pending | In Progress | 项目重构启动，分支 feature/ai-engineering-rebuild 创建 |
+| 2026-06-18 | Phase 0 | — | （越界） | ADR-0009 批准项目重命名为 Prompt2App，已完成 |
+| 2026-06-18 | Phase 0 | — | （进度） | 25 case 全部就位（HTML 7 / MultiFile 8 / Vue 10），剩余执行器 + baseline |

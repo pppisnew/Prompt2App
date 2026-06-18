@@ -1,0 +1,48 @@
+id: "019-pomodoro-timer-vue"
+title: "番茄钟 Vue 应用"
+difficulty: hard
+expected_strategy: VUE_PROJECT
+tags:
+  - vue
+  - timer
+  - state-machine
+  - audio
+
+prompt: |
+  做一个番茄钟 Vue 3 应用（Composition API）：
+  1. 三种模式：专注 25 分钟、短休 5 分钟、长休 15 分钟，顶部 tab 切换；
+  2. 主区域：圆形进度环（SVG）+ 中央倒计时数字（mm:ss）；
+  3. 控制按钮：开始/暂停/重置；
+  4. 完成一个专注后自动切到短休；每完成 4 个专注后切到长休；
+  5. 完成时播放提示音（Web Audio API 生成 beep，不允许引用外部音频文件）；
+  6. 当前已完成的专注数显示在底部（"今日已完成 X 个番茄"）；
+  7. 状态持久化到 localStorage（刷新不丢已完成数）；
+  8. 番茄红主色 + 极简风。
+
+rubric:
+  must_contain:
+    - "package.json"
+    - "vue"
+    - "ref"
+    - "setInterval"
+    - "AudioContext"
+    - "localStorage"
+    - "<svg"
+  must_not_contain:
+    - "TODO"
+    - ".mp3"
+    - ".wav"
+    - "options API"
+  llm_judge_dimensions:
+    - "三种模式 tab 切换有效"
+    - "圆形进度环 SVG 实际随时间走"
+    - "状态机：4 专注 → 长休的转换正确"
+    - "Web Audio API beep 实际响（不依赖外部音频）"
+    - "localStorage 持久化已完成数"
+    - "组件 / composable 拆分合理"
+  min_files: 5
+
+notes: |
+  考察"状态机"+"Web Audio API"两个不常考的点。
+  must_not_contain 禁止外部音频文件强制走 Web Audio。
+  常见失败：状态机转换乱（4 → 短休而非长休）、SVG 进度环没动、外部音频 URL。

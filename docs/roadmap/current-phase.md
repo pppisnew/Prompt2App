@@ -28,12 +28,11 @@
 引用自 [`definition-of-done.md`](../governance/definition-of-done.md#phase-0--评测基线)：
 
 - [x] `eval/schema/case.schema.yaml` 完成
-- [ ] `eval/cases/` 共 ≥ 25 条 case（HTML 7 / MultiFile 8 / Vue 10）
-  - [x] 001-personal-resume-page (HTML)
-  - [x] 002-coffee-shop-multipage (MultiFile)
-  - [x] 003-todo-app-vue (Vue)
-  - [ ] 还需 22 条
-- [ ] 每条 case 的 `must_contain` / `must_not_contain` / `llm_judge_dimensions` 完整
+- [x] `eval/cases/` 共 25 条 case（HTML 7 / MultiFile 8 / Vue 10）✅
+  - [x] 001, 004-009：HTML 7 条
+  - [x] 002, 010-016：MultiFile 8 条
+  - [x] 003, 017-025：Vue 10 条
+- [x] 每条 case 的 `must_contain` / `must_not_contain` / `llm_judge_dimensions` 完整
 - [ ] 评测执行器（`com.prompt2app.eval.*`）跑通端到端
 - [ ] `eval/reports/baseline.md` 已生成
 - [x] ADR-0008 Accepted

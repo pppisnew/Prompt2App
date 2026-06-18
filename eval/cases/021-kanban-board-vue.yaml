@@ -1,0 +1,47 @@
+id: "021-kanban-board-vue"
+title: "Kanban 看板 Vue 应用"
+difficulty: hard
+expected_strategy: VUE_PROJECT
+tags:
+  - vue
+  - kanban
+  - drag-drop
+  - state
+
+prompt: |
+  做一个 Kanban 看板 Vue 3 应用（Composition API）：
+  1. 三列：To Do、In Progress、Done；
+  2. 每列下方有"+ 添加任务"按钮，点击弹出 modal 输入标题、描述、优先级（高/中/低）；
+  3. 任务卡显示标题、优先级标签（颜色区分）、创建时间；
+  4. 任务卡可拖拽到其它列（HTML5 Drag & Drop API，禁止 vuedraggable / sortablejs）；
+  5. 列标题右侧显示该列任务数；
+  6. 删除任务（卡片右上角 X，二次确认）；
+  7. 数据持久化到 localStorage；
+  8. 整体浅色 + 高对比度。
+
+rubric:
+  must_contain:
+    - "package.json"
+    - "vue"
+    - "ref"
+    - "draggable"
+    - "dragstart"
+    - "drop"
+    - "localStorage"
+  must_not_contain:
+    - "TODO"
+    - "vuedraggable"
+    - "sortablejs"
+    - "options API"
+  llm_judge_dimensions:
+    - "三列布局 + 添加/删除完整"
+    - "拖拽实际工作（drag 到目标列后状态更新）"
+    - "Modal 表单 3 字段齐全"
+    - "优先级标签颜色区分清晰"
+    - "列标题计数实时更新"
+    - "组件拆分（KanbanColumn / TaskCard / TaskModal）"
+  min_files: 6
+
+notes: |
+  Kanban 是 Vue 面试经典考题。must_not_contain 禁止 vuedraggable 强制原生 Drag&Drop。
+  常见失败：拖拽 UI 看起来能动但状态没更新 / Modal 没二次确认。

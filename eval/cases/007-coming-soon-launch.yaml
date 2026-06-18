@@ -1,0 +1,32 @@
+id: "007-coming-soon-launch"
+title: "Coming Soon 倒计时页"
+difficulty: easy
+expected_strategy: HTML
+tags:
+  - coming-soon
+  - countdown
+  - newsletter
+
+prompt: |
+  做一个"即将上线"页面，产品名 Mira AI，倒计时到 2026-12-01，
+  下面有邮箱订阅框 + 订阅按钮。蓝紫渐变背景，毛玻璃卡片。
+
+rubric:
+  must_contain:
+    - "Mira AI"
+    - "2026-12-01"
+    - "input"
+    - "type=\"email\""
+    - "viewport"
+  must_not_contain:
+    - "lorem ipsum"
+    - "TODO"
+  llm_judge_dimensions:
+    - "倒计时显示有天/时/分/秒分组（即使是静态展示）"
+    - "蓝紫渐变背景实际渲染"
+    - "毛玻璃卡片效果（backdrop-filter 或类似）"
+    - "邮箱输入框 + 订阅按钮成组"
+
+notes: |
+  考察"具有静态倒计时数字 vs JavaScript 动态倒计时"的边界——HTML 单文件下，
+  生成器是否会自作主张写一段不必要的 JS。两者都可以接受，但 must_contain 不强制 JS。

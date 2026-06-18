@@ -1,0 +1,40 @@
+id: "010-photographer-portfolio"
+title: "摄影师个人作品集"
+difficulty: medium
+expected_strategy: MULTI_FILE
+tags:
+  - portfolio
+  - photography
+  - multipage
+
+prompt: |
+  给摄影师"林川"做一个个人作品集网站，4 个页面：
+  - 首页：自我介绍 + 一句话定位 + 3 张精选作品缩略图
+  - 作品集页：网格展示，分人像/风景/街拍三类 tab，每类至少 6 张图占位
+  - 关于页：详细简介、获奖经历列表、合作品牌
+  - 联系页：邮箱、Instagram、微信二维码占位
+  暗色调极简风格，画廊感。所有页面顶部统一导航。
+
+rubric:
+  must_contain:
+    - "林川"
+    - "作品集"
+    - "关于"
+    - "联系"
+    - "<nav"
+    - "href"
+    - "Instagram"
+  must_not_contain:
+    - "lorem ipsum"
+    - "TODO"
+    - "Coming soon"
+  llm_judge_dimensions:
+    - "至少 4 个页面文件且互相可跳转"
+    - "作品集页有人像/风景/街拍三类 tab 切换或锚点"
+    - "暗色调统一（黑/深灰主色）"
+    - "导航在每页位置一致"
+  min_files: 4
+
+notes: |
+  典型的 portfolio 多页站点。考察 tab/分类的实现（CSS-only 还是 JS）以及多页风格一致性。
+  常见失败：作品集页只有一个网格、忘了三类切换。
