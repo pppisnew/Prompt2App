@@ -3,7 +3,11 @@ package com.prompt2app.agent.tools;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
-import com.prompt2app.infra.constant.AppConstant;
+import com.prompt2app.agent.tools.safety.Sandbox;
+import com.prompt2app.agent.tools.safety.SandboxFactory;
+import com.prompt2app.agent.tools.safety.ToolCallCounter;
+import com.prompt2app.agent.tools.safety.ToolCallCounter.ToolKind;
+import com.prompt2app.infra.exception.ToolSafetyException;
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
 import dev.langchain4j.agent.tool.ToolMemoryId;
@@ -12,13 +16,15 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
 /**
  * 文件目录读取工具
  * 使用 Hutool 简化文件操作
+ *
+ * <p>所有路径输入经过 {@link Sandbox#resolveForRead(String)} 三层防御（ADR-0004）。
+ * 空路径会被替换为 {@code "."}（即工作目录本身）。
  */
 @Slf4j
 @Component
@@ -39,6 +45,14 @@ public class FileDirReadTool extends BaseTool {
             ".log", ".tmp", ".cache", ".lock"
     );
 
+    private final SandboxFactory sandboxFactory;
+    private final ToolCallCounter toolCallCounter;
+
+    public FileDirReadTool(SandboxFactory sandboxFactory, ToolCallCounter toolCallCounter) {
+        this.sandboxFactory = sandboxFactory;
+        this.toolCallCounter = toolCallCounter;
+    }
+
     @Tool("读取目录结构，获取指定目录下的所有文件和子目录信息")
     public String readDir(
             @P("目录的相对路径，为空则读取整个项目结构")
@@ -46,21 +60,18 @@ public class FileDirReadTool extends BaseTool {
             @ToolMemoryId Long appId
     ) {
         try {
-            Path path = Paths.get(relativeDirPath == null ? "" : relativeDirPath);
-            if (!path.isAbsolute()) {
-                String projectDirName = "vue_project_" + appId;
-                Path projectRoot = Paths.get(AppConstant.CODE_OUTPUT_ROOT_DIR, projectDirName);
-                path = projectRoot.resolve(relativeDirPath == null ? "" : relativeDirPath);
-            }
+            Sandbox sandbox = sandboxFactory.forVueApp(appId);
+            // 空路径 → "." 表示工作目录本身（PathValidator 接受单 . 段）
+            String safePath = StrUtil.isEmpty(relativeDirPath) ? "." : relativeDirPath;
+            Path path = sandbox.resolveForRead(safePath);
+            toolCallCounter.recordCall(appId, safePath, ToolKind.LIST);
             File targetDir = path.toFile();
             if (!targetDir.exists() || !targetDir.isDirectory()) {
                 return "错误：目录不存在或不是目录 - " + relativeDirPath;
             }
             StringBuilder structure = new StringBuilder();
             structure.append("项目目录结构:\n");
-            // 使用 Hutool 递归获取所有文件
             List<File> allFiles = FileUtil.loopFiles(targetDir, file -> !shouldIgnore(file.getName()));
-            // 按路径深度和名称排序显示
             allFiles.stream()
                     .sorted((f1, f2) -> {
                         int depth1 = getRelativeDepth(targetDir, f1);
@@ -76,6 +87,9 @@ public class FileDirReadTool extends BaseTool {
                         structure.append(indent).append(file.getName());
                     });
             return structure.toString();
+        } catch (ToolSafetyException e) {
+            log.warn("[Safety] readDir rejected: {}", e.getMessage());
+            return "操作被拒绝（安全限制）: " + e.getReason() + " - " + relativeDirPath;
         } catch (Exception e) {
             String errorMessage = "读取目录结构失败: " + relativeDirPath + ", 错误: " + e.getMessage();
             log.error(errorMessage, e);

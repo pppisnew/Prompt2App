@@ -11,7 +11,7 @@
 | **0** | 评测基线 | 2d | ✅ Done | 25 case + 项目重命名（ADR-0009）+ Evaluator 端到端 + baseline（stub 模式） | ⭐⭐⭐⭐⭐ |
 | **1** | 模块化单体收敛 | 2d | ✅ Done | ADR-0001 + 删除 microservice + 6 包结构 + module-design v1 + evaluator 回归 9/9 | ⭐⭐⭐ |
 | **2** | 删 LangChain4j Patch | 2d | ✅ Done | ADR-0002 + 1.1.0→1.5.1 + 删 1450 行 patch + API 适配 | ⭐⭐⭐⭐ |
-| **3** | Tool 安全体系 | 4d | ⚪ Pending | ADR-0004 + 20 单测 | ⭐⭐⭐⭐⭐ |
+| **3** | Tool 安全体系 | 4d | ✅ Done | ADR-0004 + 三层防御（Layer 1/2/3）+ 27 单测进 CI + 5 tool 接入 | ⭐⭐⭐⭐⭐ |
 | **4** | AI Router 重写 | 4d | ⚪ Pending | ADR-0003 + 路由埋点 | ⭐⭐⭐⭐⭐ |
 | **5** | Eval 体系自动化 | 5d | ⚪ Pending | ADR-0005 + CI 回归 | ⭐⭐⭐⭐⭐ |
 | **6** | 质量指标埋点 | 3d | ⚪ Pending | metric 表 + SQL 报表 | ⭐⭐⭐⭐ |
@@ -121,3 +121,5 @@
 | 2026-06-18 | Phase 1 | In Progress | **Done** | mvn compile 191 class + evaluator 9/9 持平 + module-design.md v1 |
 | 2026-06-18 | Phase 2 | Pending | In Progress | ADR-0002 起草，pom.xml 升级到 langchain4j-bom 1.5.1，删 patch 1450 行 |
 | 2026-06-18 | Phase 2 | In Progress | **Done** | API 适配 onPartialToolExecutionRequest → beforeToolExecution；mvn compile 180 class；evaluator 9/9 持平 |
+| 2026-06-18 | Phase 3 | Pending | In Progress | ADR-0004 起草，PathValidator/Sandbox/ToolCallCounter 三层就绪，27/27 safety 单测过 |
+| 2026-06-18 | Phase 3 | In Progress | **Done** | 5 个 file tool 全部接入 safety；mvn test 36/36（27 safety + 9 evaluator）；面试爆点 #1 落地 |
