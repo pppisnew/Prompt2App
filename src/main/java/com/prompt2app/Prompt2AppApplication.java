@@ -1,13 +1,12 @@
 package com.prompt2app;
 
-import dev.langchain4j.community.store.embedding.redis.spring.RedisEmbeddingStoreAutoConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 
 @EnableCaching
-@SpringBootApplication(exclude = {RedisEmbeddingStoreAutoConfiguration.class})
+@SpringBootApplication
 @MapperScan(basePackages = {"com.prompt2app.app.mapper", "com.prompt2app.metric.mapper"})
 public class Prompt2AppApplication {
 

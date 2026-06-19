@@ -143,3 +143,5 @@
 | 2026-06-19 | Phase 7 | Pending | **Done** | ADR-0006/0007 + README v2 + grafana/prometheus 清理 + Charter v1.0 锁定 = 项目完成 |
 | 2026-06-19 | Phase 8 | Pending | In Progress | Charter v1.0 锁定后增量；ADR-0010 起草，spring-dotenv 接入，Prompt2AppProperties 落地 |
 | 2026-06-19 | Phase 8 | In Progress | **Done** | 7 调用点迁移 + 死代码 CodeFileSaver 删除 + maven-compiler proc=full 修复 + 95/94 基线保持 + Charter v1.1 |
+| 2026-06-19 | Phase 8（增量 #1）| Pending | **Done** | 启动事故 #1+#2 最小修复：DB 自动建库 + Redis namespace 隔离（无 ADR） |
+| 2026-06-19 | Phase 8（增量 #2）| Pending | **Done** | 启动事故 #3：ADR-0011 删除 RedisChatMemoryStore（langchain4j-community-redis 依赖回收）|

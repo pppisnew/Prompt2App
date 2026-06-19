@@ -10,7 +10,6 @@ import com.prompt2app.infra.exception.ErrorCode;
 import com.prompt2app.app.model.enums.CodeGenTypeEnum;
 import com.prompt2app.app.service.ChatHistoryService;
 import com.prompt2app.infra.utils.SpringContextUtil;
-import dev.langchain4j.community.store.memory.chat.redis.RedisChatMemoryStore;
 import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
@@ -32,9 +31,6 @@ public class AiCodeGeneratorServiceFactory {
 
     @Resource(name = "openAiChatModel")
     private ChatModel chatModel;
-
-    @Resource
-    private RedisChatMemoryStore redisChatMemoryStore;
 
     @Resource
     private ChatHistoryService chatHistoryService;
@@ -89,11 +85,10 @@ public class AiCodeGeneratorServiceFactory {
      */
     private AiCodeGeneratorService createAiCodeGeneratorService(long appId, CodeGenTypeEnum codeGenType) {
         log.info("为 appId: {} 创建新的 AI 服务实例", appId);
-        // 根据 appId 构建独立的对话记忆
+        // 根据 appId 构建独立的对话记忆（in-process；source of truth 是 chat_history 表，每次创建时回放，详见 ADR-0011）
         MessageWindowChatMemory chatMemory = MessageWindowChatMemory
                 .builder()
                 .id(appId)
-                .chatMemoryStore(redisChatMemoryStore)
                 .maxMessages(20)
                 .build();
         // 从数据库中加载对话历史到记忆中

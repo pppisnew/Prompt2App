@@ -30,7 +30,6 @@
         <java.version>21</java.version>
         <langchain4j.version>1.5.1</langchain4j.version>
         <langchain4j-spring.version>1.5.1-beta11</langchain4j-spring.version>
-        <langchain4j-community.version>1.5.0-beta11</langchain4j-community.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -83,11 +82,6 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-reactor</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-community-redis-spring-boot-starter</artifactId>
-            <version>${langchain4j-community.version}</version>
         </dependency>
         <!-- LangGraph4j -->
         <dependency>
