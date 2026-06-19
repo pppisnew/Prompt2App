@@ -1,6 +1,6 @@
 package com.prompt2app.app.controller;
 
-import com.prompt2app.infra.constant.AppConstant;
+import com.prompt2app.infra.config.Prompt2AppProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -16,14 +16,16 @@ import org.springframework.web.servlet.HandlerMapping;
 import java.io.File;
 
 /**
- * 静态资源访问
+ * 静态资源访问。
+ *
+ * <p>预览根目录由 {@link Prompt2AppProperties#getStorage()}.codeOutputDir 提供（ADR-0010）。
  */
 @RestController
 @RequestMapping("/static")
 public class StaticResourceController {
 
-    // 应用生成根目录（用于浏览）
-    private static final String PREVIEW_ROOT_DIR = AppConstant.CODE_OUTPUT_ROOT_DIR;
+    @jakarta.annotation.Resource
+    private Prompt2AppProperties properties;
 
     /**
      * 提供静态资源访问，支持目录重定向
@@ -48,7 +50,7 @@ public class StaticResourceController {
                 resourcePath = "/index.html";
             }
             // 构建文件路径
-            String filePath = PREVIEW_ROOT_DIR + "/" + deployKey + resourcePath;
+            String filePath = properties.getStorage().getCodeOutputDir() + "/" + deployKey + resourcePath;
             File file = new File(filePath);
             // 检查文件是否存在
             if (!file.exists()) {

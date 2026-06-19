@@ -28,3 +28,4 @@
 | [0005](./0005-evaluation-automation.md) | 评测体系自动化（三维评分 + diff + CI） | Accepted | Phase 5 |
 | [0006](./0006-no-minio.md) | 当前阶段不引入 MinIO/OSS 对象存储 | Accepted | Phase 7 |
 | [0007](./0007-no-langgraph4j-workflow.md) | 不引入 LangGraph4j Workflow 作为主路径 | Accepted | Phase 7 |
+| [0010](./0010-config-unification.md) | 配置统一化（.env + Spring profiles + Prompt2AppProperties） | Accepted | Phase 8（v1.1 触发） |

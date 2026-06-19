@@ -2,7 +2,6 @@ package com.prompt2app.agent.codegen.saver;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
-import com.prompt2app.infra.constant.AppConstant;
 import com.prompt2app.infra.exception.BusinessException;
 import com.prompt2app.infra.exception.ErrorCode;
 import com.prompt2app.app.model.enums.CodeGenTypeEnum;
@@ -11,16 +10,21 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 抽象代码文件保存器 - 模板方法模式
+ * 抽象代码文件保存器 - 模板方法模式。
  *
- * @param <T>
+ * <p>根目录通过构造器注入（ADR-0010 配置外部化），由 {@code CodeFileSaverExecutor} 从
+ * {@code Prompt2AppProperties.storage.codeOutputDir} 取值后传入，禁止在此硬编码。
+ *
+ * @param <T> 代码结果对象类型
  */
 public abstract class CodeFileSaverTemplate<T> {
 
-    /**
-     * 文件保存的根目录
-     */
-    private static final String FILE_SAVE_ROOT_DIR = AppConstant.CODE_OUTPUT_ROOT_DIR;
+    /** 文件保存的根目录（来自 Prompt2AppProperties.storage.codeOutputDir）。 */
+    private final String fileSaveRootDir;
+
+    protected CodeFileSaverTemplate(String fileSaveRootDir) {
+        this.fileSaveRootDir = fileSaveRootDir;
+    }
 
     /**
      * 模板方法：保存代码的标准流程
@@ -77,7 +81,7 @@ public abstract class CodeFileSaverTemplate<T> {
         }
         String codeType = getCodeType().getValue();
         String uniqueDirName = StrUtil.format("{}_{}", codeType, appId);
-        String dirPath = FILE_SAVE_ROOT_DIR + File.separator + uniqueDirName;
+        String dirPath = fileSaveRootDir + File.separator + uniqueDirName;
         FileUtil.mkdir(dirPath);
         return dirPath;
     }

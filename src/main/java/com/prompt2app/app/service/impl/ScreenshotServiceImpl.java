@@ -2,6 +2,7 @@ package com.prompt2app.app.service.impl;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
+import com.prompt2app.infra.config.Prompt2AppProperties;
 import com.prompt2app.infra.exception.ErrorCode;
 import com.prompt2app.infra.exception.ThrowUtils;
 import com.prompt2app.infra.manager.CosManager;
@@ -23,13 +24,17 @@ public class ScreenshotServiceImpl implements ScreenshotService {
     @Resource
     private CosManager cosManager;
 
+    @Resource
+    private Prompt2AppProperties properties;
+
     @Override
     public String generateAndUploadScreenshot(String webUrl) {
         // 参数校验
         ThrowUtils.throwIf(StrUtil.isBlank(webUrl), ErrorCode.PARAMS_ERROR, "截图的网址不能为空");
         log.info("开始生成网页截图，URL：{}", webUrl);
-        // 本地截图
-        String localScreenshotPath = WebScreenshotUtils.saveWebPageScreenshot(webUrl);
+        // 本地截图（截图根目录从配置注入，ADR-0010）
+        String localScreenshotPath = WebScreenshotUtils.saveWebPageScreenshot(
+                webUrl, properties.getStorage().getScreenshotsDir());
         ThrowUtils.throwIf(StrUtil.isBlank(localScreenshotPath), ErrorCode.OPERATION_ERROR, "生成网页截图失败");
         // 上传图片到 COS
         try {

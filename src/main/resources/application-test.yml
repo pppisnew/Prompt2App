@@ -1,0 +1,38 @@
+# =================================================================
+# Prompt2App · test profile（测试环境）
+# 用于 CI / 自动化测试。本文件【提交到仓库】，不包含任何敏感信息。
+# 测试不依赖外部真实服务，关键开关在此显式禁用 / 使用安全默认。
+# =================================================================
+spring:
+  config:
+    activate:
+      on-profile: test
+
+# 测试环境关闭日志噪声
+langchain4j:
+  open-ai:
+    chat-model:
+      log-requests: false
+      log-responses: false
+    streaming-chat-model:
+      log-requests: false
+      log-responses: false
+    reasoning-streaming-chat-model:
+      log-requests: false
+      log-responses: false
+    routing-chat-model:
+      log-requests: false
+      log-responses: false
+
+# 测试用文件目录隔离到 build/tmp/，避免污染 dev/local 的 tmp/
+prompt2app:
+  storage:
+    code-output-dir: ${user.dir}/build/tmp/code_output
+    code-deploy-dir: ${user.dir}/build/tmp/code_deploy
+    screenshots-dir: ${user.dir}/build/tmp/screenshots
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

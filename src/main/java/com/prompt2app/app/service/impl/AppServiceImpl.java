@@ -9,7 +9,7 @@ import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.prompt2app.router.AiCodeGenTypeRoutingService;
 import com.prompt2app.router.AiCodeGenTypeRoutingServiceFactory;
-import com.prompt2app.infra.constant.AppConstant;
+import com.prompt2app.infra.config.Prompt2AppProperties;
 import com.prompt2app.agent.codegen.AiCodeGeneratorFacade;
 import com.prompt2app.agent.codegen.builder.VueProjectBuilder;
 import com.prompt2app.agent.codegen.handler.StreamHandlerExecutor;
@@ -33,7 +33,6 @@ import com.prompt2app.app.service.ScreenshotService;
 import com.prompt2app.app.service.UserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -55,8 +54,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppService {
 
-    @Value("${code.deploy-host:http://localhost}")
-    private String deployHost;
+    @Resource
+    private Prompt2AppProperties properties;
 
     @Resource
     private UserService userService;
@@ -173,7 +172,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
         // 5. 获取代码生成类型，获取原始代码生成路径（应用访问目录）
         String codeGenType = app.getCodeGenType();
         String sourceDirName = codeGenType + "_" + appId;
-        String sourceDirPath = AppConstant.CODE_OUTPUT_ROOT_DIR + File.separator + sourceDirName;
+        String sourceDirPath = properties.getStorage().getCodeOutputDir() + File.separator + sourceDirName;
         // 6. 检查路径是否存在
         File sourceDir = new File(sourceDirPath);
         if (!sourceDir.exists() || !sourceDir.isDirectory()) {
@@ -192,7 +191,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
             sourceDir = distDir;
         }
         // 8. 复制文件到部署目录
-        String deployDirPath = AppConstant.CODE_DEPLOY_ROOT_DIR + File.separator + deployKey;
+        String deployDirPath = properties.getStorage().getCodeDeployDir() + File.separator + deployKey;
         try {
             FileUtil.copyContent(sourceDir, new File(deployDirPath), true);
         } catch (Exception e) {
@@ -206,7 +205,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
         boolean updateResult = this.updateById(updateApp);
         ThrowUtils.throwIf(!updateResult, ErrorCode.OPERATION_ERROR, "更新应用部署信息失败");
         // 10. 构建应用访问 URL
-        String appDeployUrl = String.format("%s/%s/", deployHost, deployKey);        // 11. 异步生成截图并且更新应用封面
+        String appDeployUrl = String.format("%s/%s/", properties.getStorage().getCodeDeployHost(), deployKey);        // 11. 异步生成截图并且更新应用封面
         generateAppScreenshotAsync(appId, appDeployUrl);
         return appDeployUrl;
     }

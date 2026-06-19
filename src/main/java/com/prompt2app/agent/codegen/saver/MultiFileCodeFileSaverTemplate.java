@@ -13,6 +13,10 @@ import com.prompt2app.app.model.enums.CodeGenTypeEnum;
  */
 public class MultiFileCodeFileSaverTemplate extends CodeFileSaverTemplate<MultiFileCodeResult> {
 
+    public MultiFileCodeFileSaverTemplate(String fileSaveRootDir) {
+        super(fileSaveRootDir);
+    }
+
     @Override
     protected CodeGenTypeEnum getCodeType() {
         return CodeGenTypeEnum.MULTI_FILE;

@@ -13,6 +13,10 @@ import com.prompt2app.app.model.enums.CodeGenTypeEnum;
  */
 public class HtmlCodeFileSaverTemplate extends CodeFileSaverTemplate<HtmlCodeResult> {
 
+    public HtmlCodeFileSaverTemplate(String fileSaveRootDir) {
+        super(fileSaveRootDir);
+    }
+
     @Override
     protected CodeGenTypeEnum getCodeType() {
         return CodeGenTypeEnum.HTML;

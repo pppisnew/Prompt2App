@@ -9,6 +9,7 @@ import com.prompt2app.infra.annotation.AuthCheck;
 import com.prompt2app.infra.common.BaseResponse;
 import com.prompt2app.infra.common.DeleteRequest;
 import com.prompt2app.infra.common.ResultUtils;
+import com.prompt2app.infra.config.Prompt2AppProperties;
 import com.prompt2app.infra.constant.AppConstant;
 import com.prompt2app.infra.constant.UserConstant;
 import com.prompt2app.infra.exception.BusinessException;
@@ -55,6 +56,9 @@ public class AppController {
 
     @Resource
     private ProjectDownloadService projectDownloadService;
+
+    @Resource
+    private Prompt2AppProperties properties;
 
     @GetMapping(value = "/chat/gen/code", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @RateLimit(limitType = RateLimitType.USER, rate = 5, rateInterval = 60, message = "AI 对话请求过于频繁，请稍后再试")
@@ -132,7 +136,7 @@ public class AppController {
         // 4. 构建应用代码目录路径（生成目录，非部署目录）
         String codeGenType = app.getCodeGenType();
         String sourceDirName = codeGenType + "_" + appId;
-        String sourceDirPath = AppConstant.CODE_OUTPUT_ROOT_DIR + File.separator + sourceDirName;
+        String sourceDirPath = properties.getStorage().getCodeOutputDir() + File.separator + sourceDirName;
         // 5. 检查代码目录是否存在
         File sourceDir = new File(sourceDirPath);
         ThrowUtils.throwIf(!sourceDir.exists() || !sourceDir.isDirectory(),

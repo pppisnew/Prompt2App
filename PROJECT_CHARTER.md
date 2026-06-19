@@ -62,6 +62,7 @@
 | **Task Record** | 任何持续 > 30 分钟的工作，必须留 Task Record |
 | **Phase 边界** | 不允许跨 Phase 开发；当前 Phase 见 [`docs/roadmap/current-phase.md`](./docs/roadmap/current-phase.md) |
 | **CI 红线** | Tool 安全测试（Phase 3 起）必须 100% 通过 |
+| **配置外部化** | 所有部署变量（路径/host/端口/密钥/模型名/阈值）走 `Prompt2AppProperties` + `.env`；业务代码禁止硬编码（v1.1 / Phase 8 / ADR-0010）|
 
 ---
 
@@ -96,9 +97,10 @@
 
 ## 7. 当前生效版本
 
-- **版本**：v1.0
-- **生效日期**：2026-06-18（Phase 0-6） + 2026-06-19（Phase 7 收尾）
-- **Phase 0-7 全部完成**：见 [`docs/roadmap/milestones.md`](./docs/roadmap/milestones.md)
+- **版本**：v1.1
+- **生效日期**：2026-06-18（Phase 0-6） + 2026-06-19（Phase 7 收尾、Phase 8 配置统一化）
+- **v1.1 微补丁**（ADR-0010 触发）：§4 增加 "配置外部化" 质量底线
+- **Phase 0-8 全部完成**：见 [`docs/roadmap/milestones.md`](./docs/roadmap/milestones.md)
 - **下次例行回看**：项目目标从"作品集"切换到"对外服务"时，或满足下列任一条件：
   - 出现需要推翻 §3「明确不做」中任一条目的诉求
   - 团队规模 > 1 人，需要重新评估治理体系

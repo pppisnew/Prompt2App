@@ -1,6 +1,6 @@
 # Milestones
 
-> 项目总路线图。22 天 / 8 Phase / 4 个面试爆点。每完成一个 Phase 必须更新本表。
+> 项目总路线图。22 天主线 / 8 Phase / 4 个面试爆点 + Phase 8 后续增量。每完成一个 Phase 必须更新本表。
 
 ---
 
@@ -16,7 +16,8 @@
 | **5** | Eval 体系自动化 | 5d | ✅ Done | ADR-0005 + 三维评分 + DiffReporter + CI 门控 + 33 新单测 (86/87) | ⭐⭐⭐⭐⭐ |
 | **6** | 质量指标埋点 | 3d | ✅ Done | generation_metric 表 + 4 SQL 聚合 + REST endpoint + 8 单测 | ⭐⭐⭐⭐ |
 | **7** | 收尾 | 2d | ✅ Done | ADR-0006/0007 + README v2 + grafana/prometheus 清理 + Charter v1.0 锁定 | ⭐⭐⭐ |
-| | **合计** | **22d** | | | |
+| **8** | 配置统一化 | 1d | ✅ Done | ADR-0010 + spring-dotenv + Prompt2AppProperties + 7 调用点迁移 + .env.example + Charter v1.0→v1.1 | ⭐⭐⭐ |
+| | **合计** | **23d** | | | |
 
 ---
 
@@ -98,6 +99,17 @@
 
 ---
 
+### Phase 8 · 配置统一化（1d）
+
+**目标**：消除所有部署变量的硬编码，建立单一配置入口。
+
+- 关键产出：ADR-0010 + `Prompt2AppProperties` + `.env.example` + 7 调用点迁移
+- 触发：Charter v1.0 锁定后用户审计发现 5 处硬编码（AppConstant 路径/host、application.yml 明文密钥、CodeFileSaver 静态字段、@Value 重复定义、`System.getProperty("user.dir")` 拼接）
+- 副产物：Charter v1.0 → v1.1（§4 增加"配置外部化"质量底线）
+- 工具链问题修复：maven-compiler-plugin 3.14.0 + Lombok 注解处理 → `<proc>full</proc>`
+
+---
+
 ## 总产出清单（项目结束时应有）
 
 - ✅ 一个能跑的模块化单体（Spring Boot 3 + Vue 3）
@@ -129,3 +141,5 @@
 | 2026-06-19 | Phase 5 | In Progress | **Done** | 33 个新单测全过；86/87 总通过；CI 三大门控就绪；面试爆点 #3 落地 |
 | 2026-06-19 | Phase 6 | Pending | **Done** | generation_metric 表 + 4 聚合 SQL + REST + 8 单测；94/95 总通过 |
 | 2026-06-19 | Phase 7 | Pending | **Done** | ADR-0006/0007 + README v2 + grafana/prometheus 清理 + Charter v1.0 锁定 = 项目完成 |
+| 2026-06-19 | Phase 8 | Pending | In Progress | Charter v1.0 锁定后增量；ADR-0010 起草，spring-dotenv 接入，Prompt2AppProperties 落地 |
+| 2026-06-19 | Phase 8 | In Progress | **Done** | 7 调用点迁移 + 死代码 CodeFileSaver 删除 + maven-compiler proc=full 修复 + 95/94 基线保持 + Charter v1.1 |

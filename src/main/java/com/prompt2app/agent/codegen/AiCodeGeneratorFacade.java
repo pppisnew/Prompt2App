@@ -8,10 +8,10 @@ import com.prompt2app.agent.model.MultiFileCodeResult;
 import com.prompt2app.agent.model.message.AiResponseMessage;
 import com.prompt2app.agent.model.message.ToolExecutedMessage;
 import com.prompt2app.agent.model.message.ToolRequestMessage;
-import com.prompt2app.infra.constant.AppConstant;
 import com.prompt2app.agent.codegen.builder.VueProjectBuilder;
 import com.prompt2app.agent.codegen.parser.CodeParserExecutor;
 import com.prompt2app.agent.codegen.saver.CodeFileSaverExecutor;
+import com.prompt2app.infra.config.Prompt2AppProperties;
 import com.prompt2app.infra.exception.BusinessException;
 import com.prompt2app.infra.exception.ErrorCode;
 import com.prompt2app.app.model.enums.CodeGenTypeEnum;
@@ -39,6 +39,12 @@ public class AiCodeGeneratorFacade {
     @Resource
     private VueProjectBuilder vueProjectBuilder;
 
+    @Resource
+    private CodeFileSaverExecutor codeFileSaverExecutor;
+
+    @Resource
+    private Prompt2AppProperties properties;
+
     /**
      * 统一入口：根据类型生成并保存代码
      *
@@ -56,11 +62,11 @@ public class AiCodeGeneratorFacade {
         return switch (codeGenTypeEnum) {
             case HTML -> {
                 HtmlCodeResult result = aiCodeGeneratorService.generateHtmlCode(userMessage);
-                yield CodeFileSaverExecutor.executeSaver(result, CodeGenTypeEnum.HTML, appId);
+                yield codeFileSaverExecutor.executeSaver(result, CodeGenTypeEnum.HTML, appId);
             }
             case MULTI_FILE -> {
                 MultiFileCodeResult result = aiCodeGeneratorService.generateMultiFileCode(userMessage);
-                yield CodeFileSaverExecutor.executeSaver(result, CodeGenTypeEnum.MULTI_FILE, appId);
+                yield codeFileSaverExecutor.executeSaver(result, CodeGenTypeEnum.MULTI_FILE, appId);
             }
             default -> {
                 String errorMessage = "不支持的生成类型：" + codeGenTypeEnum.getValue();
@@ -129,7 +135,7 @@ public class AiCodeGeneratorFacade {
                     })
                     .onCompleteResponse((ChatResponse response) -> {
                         // 执行 Vue 项目构建（同步执行，确保预览时项目已就绪）
-                        String projectPath = AppConstant.CODE_OUTPUT_ROOT_DIR + "/vue_project_" + appId;
+                        String projectPath = properties.getStorage().getCodeOutputDir() + "/vue_project_" + appId;
                         vueProjectBuilder.buildProject(projectPath);
                         sink.complete();
                     })
@@ -162,7 +168,7 @@ public class AiCodeGeneratorFacade {
                 // 使用执行器解析代码
                 Object parsedResult = CodeParserExecutor.executeParser(completeCode, codeGenType);
                 // 使用执行器保存代码
-                File saveDir = CodeFileSaverExecutor.executeSaver(parsedResult, codeGenType, appId);
+                File saveDir = codeFileSaverExecutor.executeSaver(parsedResult, codeGenType, appId);
                 log.info("保存成功，目录为：{}", saveDir.getAbsolutePath());
             } catch (Exception e) {
                 log.error("保存失败: {}", e.getMessage());

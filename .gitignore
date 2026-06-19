@@ -1,5 +1,10 @@
 ### CUSTOM ###
+# 配置外部化（ADR-0010）：含敏感值或环境特异化值的配置不入库
+.env
+.env.local
+.env.*.local
 application-local.yml
+application-dev.yml
 application-prod.yml
 tmp
 

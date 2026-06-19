@@ -12,7 +12,8 @@ class WebScreenshotUtilsTest {
     @Test
     void saveWebPageScreenshot() {
         String testUrl = "https://www.codefather.cn";
-        String webPageScreenshot = WebScreenshotUtils.saveWebPageScreenshot(testUrl);
+        String screenshotsRoot = System.getProperty("user.dir") + "/tmp/screenshots";
+        String webPageScreenshot = WebScreenshotUtils.saveWebPageScreenshot(testUrl, screenshotsRoot);
         Assertions.assertNotNull(webPageScreenshot);
     }
 }

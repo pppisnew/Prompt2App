@@ -45,12 +45,13 @@ public class WebScreenshotUtils {
     }
 
     /**
-     * 生成网页截图
+     * 生成网页截图。
      *
-     * @param webUrl 要截图的网址
+     * @param webUrl          要截图的网址
+     * @param screenshotsRoot 截图根目录（来自 Prompt2AppProperties.storage.screenshotsDir，ADR-0010）
      * @return 压缩后的截图文件路径，失败返回 null
      */
-    public static String saveWebPageScreenshot(String webUrl) {
+    public static String saveWebPageScreenshot(String webUrl, String screenshotsRoot) {
         // 非空校验
         if (StrUtil.isBlank(webUrl)) {
             log.error("网页截图失败，url为空");
@@ -58,7 +59,7 @@ public class WebScreenshotUtils {
         }
         // 创建临时目录
         try {
-            String rootPath = System.getProperty("user.dir") + "/tmp/screenshots/" + UUID.randomUUID().toString().substring(0, 8);
+            String rootPath = screenshotsRoot + "/" + UUID.randomUUID().toString().substring(0, 8);
             FileUtil.mkdir(rootPath);
             // 图片后缀
             final String IMAGE_SUFFIX = ".png";
