@@ -31,3 +31,4 @@ YYYY-MM-DD-<phase>-<slug>.md
 | 2026-06-18 | Phase 4 | [AI Router 规则 + LLM 兜底两层架构](./2026-06-18-phase4-router.md) | 项目作者 + AI | ✅ 完成 |
 | 2026-06-19 | Phase 5 | [评测体系自动化（三维评分 + Diff + CI）](./2026-06-19-phase5-eval-automation.md) | 项目作者 + AI | ✅ 完成 |
 | 2026-06-19 | Phase 6 | [生成质量埋点（generation_metric + 报表 API）](./2026-06-19-phase6-metrics.md) | 项目作者 + AI | ✅ 完成 |
+| 2026-06-19 | Phase 7 | [项目收尾 + 完成总结（ADR-0006/0007 + README v2）](./2026-06-19-phase7-closeout.md) | 项目作者 + AI | ✅ **项目完成** |

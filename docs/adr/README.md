@@ -26,5 +26,5 @@
 | [0004](./0004-tool-safety.md) | Tool Calling 三层安全防御体系 | Accepted | Phase 3 |
 | [0003](./0003-ai-router-two-layer.md) | AI Router 采用规则 + LLM 兜底两层架构 | Accepted | Phase 4 |
 | [0005](./0005-evaluation-automation.md) | 评测体系自动化（三维评分 + diff + CI） | Accepted | Phase 5 |
-| 0006 | 当前阶段不引入 MinIO/OSS 对象存储 | _待写_ | 收尾 |
-| 0007 | 不引入 LangGraph4j Workflow 作为主路径 | _待写_ | 收尾 |
+| [0006](./0006-no-minio.md) | 当前阶段不引入 MinIO/OSS 对象存储 | Accepted | Phase 7 |
+| [0007](./0007-no-langgraph4j-workflow.md) | 不引入 LangGraph4j Workflow 作为主路径 | Accepted | Phase 7 |

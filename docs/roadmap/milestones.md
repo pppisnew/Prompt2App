@@ -15,7 +15,7 @@
 | **4** | AI Router 重写 | 4d | ✅ Done | ADR-0003 + 两层路由 + 17 单测 + **80% 准确率 / 88% 命中率** | ⭐⭐⭐⭐⭐ |
 | **5** | Eval 体系自动化 | 5d | ✅ Done | ADR-0005 + 三维评分 + DiffReporter + CI 门控 + 33 新单测 (86/87) | ⭐⭐⭐⭐⭐ |
 | **6** | 质量指标埋点 | 3d | ✅ Done | generation_metric 表 + 4 SQL 聚合 + REST endpoint + 8 单测 | ⭐⭐⭐⭐ |
-| **7** | 收尾 | 2d | ⚪ Pending | ADR-0006/0007 + README | ⭐⭐⭐ |
+| **7** | 收尾 | 2d | ✅ Done | ADR-0006/0007 + README v2 + grafana/prometheus 清理 + Charter v1.0 锁定 | ⭐⭐⭐ |
 | | **合计** | **22d** | | | |
 
 ---
@@ -128,3 +128,4 @@
 | 2026-06-19 | Phase 5 | Pending | In Progress | ADR-0005 + Scorer 接口 + 4 个评分实现 + DiffReporter + CI workflow |
 | 2026-06-19 | Phase 5 | In Progress | **Done** | 33 个新单测全过；86/87 总通过；CI 三大门控就绪；面试爆点 #3 落地 |
 | 2026-06-19 | Phase 6 | Pending | **Done** | generation_metric 表 + 4 聚合 SQL + REST + 8 单测；94/95 总通过 |
+| 2026-06-19 | Phase 7 | Pending | **Done** | ADR-0006/0007 + README v2 + grafana/prometheus 清理 + Charter v1.0 锁定 = 项目完成 |
