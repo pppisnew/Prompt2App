@@ -16,7 +16,7 @@ spring:
   # MySQL
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DB_URL:jdbc:mysql://localhost:3306/yu_ai_code_mother}
+    url: ${DB_URL:jdbc:mysql://localhost:3306/prompt2app}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:}
   # Redis

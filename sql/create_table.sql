@@ -1,12 +1,13 @@
 # 数据库初始化
-# @author <a href="https://github.com/liyupi">程序员鱼皮</a>
-# @from <a href="https://codefather.cn">编程导航学习圈</a>
+# 数据库名 prompt2app（2026-06-19 由 yu_ai_code_mother 重命名，跟随 ADR-0009 项目改名）
+# 已有实例迁移命令： mysqldump yu_ai_code_mother | mysql prompt2app  或  RENAME 表逐个迁过去
+# 全新部署直接执行本文件即可。
 
 -- 创建库
-create database if not exists yu_ai_code_mother;
+create database if not exists prompt2app;
 
 -- 切换库
-use yu_ai_code_mother;
+use prompt2app;
 
 -- 用户表
 -- 以下是建表语句

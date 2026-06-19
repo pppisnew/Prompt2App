@@ -5,8 +5,8 @@ spring:
   # mysql
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://<Your IP>:3306/yu_ai_code_mother
-    username: yu_ai_code_mother_user
+    url: jdbc:mysql://<Your IP>:3306/prompt2app
+    username: prompt2app_user
     password: 12345678
   # redis
   data:

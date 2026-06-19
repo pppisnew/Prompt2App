@@ -1,7 +1,7 @@
 -- Phase 6 · 生成质量埋点表（ADR 在 task record / metric-design.md）
 -- 每次代码生成请求 → 一行记录。
 
-USE yu_ai_code_mother;
+USE prompt2app;
 
 -- 生成质量指标表
 CREATE TABLE IF NOT EXISTS generation_metric
