@@ -82,6 +82,9 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
     @Resource
     private com.prompt2app.router.RoutingService routingService;
 
+    @Resource
+    private com.prompt2app.metric.GenerationMetricService generationMetricService;
+
     @Override
     public Flux<String> chatToGenCode(Long appId, String message, User loginUser) {
         // 1. 参数校验
@@ -137,6 +140,12 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
         // 插入数据库
         boolean result = this.save(app);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        // Phase 6 · ADR-0005：路由阶段完成立即落 metric 表（routing 字段就绪，outcome 待生成完成时补全）
+        try {
+            generationMetricService.recordRouting(app.getId(), loginUser.getId(), routingDecision);
+        } catch (Exception ignore) {
+            // 监控故障不阻塞主链路
+        }
         log.info("应用创建成功，ID: {}, 类型: {}, 路由层: {}, 耗时: {}ms",
                 app.getId(), selectedCodeGenType.getValue(),
                 routingDecision.getLayer(), routingDecision.getDurationMs());

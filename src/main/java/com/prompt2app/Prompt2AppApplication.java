@@ -8,7 +8,7 @@ import org.springframework.cache.annotation.EnableCaching;
 
 @EnableCaching
 @SpringBootApplication(exclude = {RedisEmbeddingStoreAutoConfiguration.class})
-@MapperScan("com.prompt2app.app.mapper")
+@MapperScan(basePackages = {"com.prompt2app.app.mapper", "com.prompt2app.metric.mapper"})
 public class Prompt2AppApplication {
 
     public static void main(String[] args) {

@@ -43,7 +43,8 @@
 ## Phase 7 范围
 
 - **2026-06-18** · 决定不引入 Workflow，但需要在 ADR-0007 里写明"曾评估过 Plan-Execute-Review 三节点方案，决定不做的具体理由"——避免日后被问起没有论据。
-- **2026-06-18** · README.md 改写——目前是教程版本，结尾时改写为"面向招聘官的项目介绍"。
+- **2026-06-18** · README.md 改写——目前是 Prompt2App 简介版本，结尾时改写为"面向招聘官的项目介绍"，含 6 Phase 演进图 + 4 个面试爆点。
+- **2026-06-19** · `GenerationMetricService.completeOutcome` 接入：当前 Phase 6 只接了 `recordRouting`，generation 阶段的 `completeOutcome`（含 token / cost / tool_call_count / success）需要改 `AiCodeGeneratorFacade` SSE 流的 onComplete / onError 钩子，跨多个文件。Phase 7 README 改写时若有时间再补；不影响 Phase 6 数据结构 + 报表 API 的完整性。
 
 ---
 
