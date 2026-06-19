@@ -1,0 +1,62 @@
+name: Eval & Safety CI
+
+# Phase 5 (ADR-0005): CI 守护核心质量门控。
+# 只跑不依赖外部 LLM 的测试 —— 三大门控：
+#   1. 评测框架自身（com.prompt2app.eval.*Test）
+#   2. AI Router 准确率回归（含 RouterAccuracyTest 25 case 阈值）
+#   3. Tool 安全（com.prompt2app.agent.tools.safety.*Test）
+#
+# 任一失败 PR 红灯。
+#
+# LLM-Judge 真跑（live mode）通过本地 EVAL_LIVE=1 触发，不进 CI。
+
+on:
+  push:
+    branches: [master, main, "feature/**"]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  eval-and-safety:
+    name: Eval framework + Router accuracy + Tool safety
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Lombok-compatible)
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Maven version
+        run: mvn --version
+
+      - name: Compile (skip tests)
+        run: mvn -B -q -DskipTests clean compile
+
+      - name: Run eval framework tests
+        run: mvn -B test -Dtest='com.prompt2app.eval.*Test' -DfailIfNoTests=false
+
+      - name: Run AI Router accuracy regression
+        # 阈值：hit rate >= 80%, accuracy >= 60% (per ADR-0003)
+        run: mvn -B test -Dtest='com.prompt2app.router.*Test' -DfailIfNoTests=false
+
+      - name: Run Tool Safety regression
+        # 阈值：27/27 必须全过（任一红灯阻断 PR）per ADR-0004
+        run: mvn -B test -Dtest='com.prompt2app.agent.tools.safety.*Test' -DfailIfNoTests=false
+
+      - name: Generate stub-mode baseline.md
+        # 跑 evaluator end-to-end 产出当次 stub baseline
+        run: mvn -B test -Dtest='EvalRunnerSmokeTest' -DfailIfNoTests=false
+
+      - name: Upload baseline.md as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseline-${{ github.sha }}
+          path: eval/reports/baseline.md
+          retention-days: 30

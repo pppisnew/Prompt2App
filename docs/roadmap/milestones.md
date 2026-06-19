@@ -13,7 +13,7 @@
 | **2** | 删 LangChain4j Patch | 2d | ✅ Done | ADR-0002 + 1.1.0→1.5.1 + 删 1450 行 patch + API 适配 | ⭐⭐⭐⭐ |
 | **3** | Tool 安全体系 | 4d | ✅ Done | ADR-0004 + 三层防御（Layer 1/2/3）+ 27 单测进 CI + 5 tool 接入 | ⭐⭐⭐⭐⭐ |
 | **4** | AI Router 重写 | 4d | ✅ Done | ADR-0003 + 两层路由 + 17 单测 + **80% 准确率 / 88% 命中率** | ⭐⭐⭐⭐⭐ |
-| **5** | Eval 体系自动化 | 5d | ⚪ Pending | ADR-0005 + CI 回归 | ⭐⭐⭐⭐⭐ |
+| **5** | Eval 体系自动化 | 5d | ✅ Done | ADR-0005 + 三维评分 + DiffReporter + CI 门控 + 33 新单测 (86/87) | ⭐⭐⭐⭐⭐ |
 | **6** | 质量指标埋点 | 3d | ⚪ Pending | metric 表 + SQL 报表 | ⭐⭐⭐⭐ |
 | **7** | 收尾 | 2d | ⚪ Pending | ADR-0006/0007 + README | ⭐⭐⭐ |
 | | **合计** | **22d** | | | |
@@ -125,3 +125,5 @@
 | 2026-06-18 | Phase 3 | In Progress | **Done** | 5 个 file tool 全部接入 safety；mvn test 36/36（27 safety + 9 evaluator）；面试爆点 #1 落地 |
 | 2026-06-18 | Phase 4 | Pending | In Progress | ADR-0003 起草，RoutingDecision/RuleRouter/RoutingService 三类就绪；接入两个调用点 |
 | 2026-06-18 | Phase 4 | In Progress | **Done** | 规则调优后 Layer 1 准确率 60%→80%、命中率 88%；17 router 单测全过；面试爆点 #2 落地 |
+| 2026-06-19 | Phase 5 | Pending | In Progress | ADR-0005 + Scorer 接口 + 4 个评分实现 + DiffReporter + CI workflow |
+| 2026-06-19 | Phase 5 | In Progress | **Done** | 33 个新单测全过；86/87 总通过；CI 三大门控就绪；面试爆点 #3 落地 |

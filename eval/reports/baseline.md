@@ -1,10 +1,10 @@
 # Baseline Report
 
-- **Generated**: 2026-06-18 23:36:33
+- **Generated**: 2026-06-19 14:38:19
 - **Invoker**: `stub`
 - **Cases**: 25
 
-> ⚠️ **Stub mode** — no real LLM calls were made. This file shows the eval set's structural overview only. Real baseline scores will land once a non-stub `AgentInvoker` is wired (planned for Phase 1+ after the codebase compiles cleanly).
+> ⚠️ **Stub mode** — no real LLM calls were made. This file shows the eval set's structural overview only.
 
 ## Distribution
 

@@ -5,20 +5,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Writes baseline / phase reports to {@code eval/reports/}.
+ * 评测报表写入器（Phase 5 升级）。
  *
- * <p>Phase 0 format is intentionally minimal: distribution, summary, per-case table.
- * Phase 5 will add diff-against-prev-baseline, regression flags, and LLM-Judge breakdowns.
+ * <p>支持两种产出：
+ * <ul>
+ *   <li>{@link #writeBaseline} —— Phase 0 起就有的 stub 模式快照</li>
+ *   <li>{@link #writeFull} —— Phase 5 新增：含三维评分 + diff 段</li>
+ * </ul>
  */
 public class MarkdownReporter {
 
     private static final DateTimeFormatter ISO = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    // ---------- Phase 0 baseline (stub 模式) ----------
 
     public void writeBaseline(List<CaseRun> runs, AgentInvoker invoker, Path output) {
         StringBuilder sb = new StringBuilder(8 * 1024);
@@ -26,28 +32,37 @@ public class MarkdownReporter {
         appendDistribution(sb, runs);
         appendSummary(sb, runs);
         appendPerCase(sb, runs);
-
-        try {
-            if (output.getParent() != null) {
-                Files.createDirectories(output.getParent());
-            }
-            Files.writeString(output, sb.toString());
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to write baseline report: " + output, e);
-        }
+        write(output, sb.toString());
     }
+
+    // ---------- Phase 5 full report (3-dim + diff) ----------
+
+    /** Phase 5 完整报表：含三维评分 + diff 段。 */
+    public void writeFull(List<CaseFullRun> runs,
+                          AgentInvoker invoker,
+                          DiffReporter.DiffReport diff,
+                          Path output) {
+        StringBuilder sb = new StringBuilder(16 * 1024);
+        appendFullHeader(sb, runs, invoker);
+        appendFullDistribution(sb, runs);
+        appendFullSummary(sb, runs);
+        appendFullPerCase(sb, runs);
+        if (diff != null) {
+            sb.append(new DiffReporter().render(diff));
+        }
+        write(output, sb.toString());
+    }
+
+    // ---------- helpers ----------
 
     private void appendHeader(StringBuilder sb, List<CaseRun> runs, AgentInvoker invoker) {
         sb.append("# Baseline Report\n\n");
         sb.append("- **Generated**: ").append(LocalDateTime.now().format(ISO)).append("\n");
         sb.append("- **Invoker**: `").append(invoker.name()).append("`\n");
         sb.append("- **Cases**: ").append(runs.size()).append("\n\n");
-
         if ("stub".equals(invoker.name())) {
             sb.append("> ⚠️ **Stub mode** — no real LLM calls were made. ");
-            sb.append("This file shows the eval set's structural overview only. ");
-            sb.append("Real baseline scores will land once a non-stub `AgentInvoker` is wired ");
-            sb.append("(planned for Phase 1+ after the codebase compiles cleanly).\n\n");
+            sb.append("This file shows the eval set's structural overview only.\n\n");
         }
     }
 
@@ -105,7 +120,81 @@ public class MarkdownReporter {
         sb.append("\n");
     }
 
-    /** Aggregate of a single case's invocation + score. Plain record. */
-    public record CaseRun(EvalCase evalCase, AgentInvoker.InvocationResult invocation, RubricScorer.CaseScore score) {
+    private void appendFullHeader(StringBuilder sb, List<CaseFullRun> runs, AgentInvoker invoker) {
+        sb.append("# Eval Report (Phase 5 · 3-dim)\n\n");
+        sb.append("- **Generated**: ").append(LocalDateTime.now().format(ISO)).append("\n");
+        sb.append("- **Invoker**: `").append(invoker.name()).append("`\n");
+        sb.append("- **Cases**: ").append(runs.size()).append("\n\n");
+    }
+
+    private void appendFullDistribution(StringBuilder sb, List<CaseFullRun> runs) {
+        Map<String, Long> byStrategy = new TreeMap<>();
+        for (CaseFullRun run : runs) {
+            byStrategy.merge(run.evalCase().getExpectedStrategy(), 1L, Long::sum);
+        }
+        sb.append("## Distribution\n\n");
+        sb.append("| Strategy | Count |\n| --- | --- |\n");
+        byStrategy.forEach((k, v) -> sb.append("| ").append(k).append(" | ").append(v).append(" |\n"));
+        sb.append("\n");
+    }
+
+    private void appendFullSummary(StringBuilder sb, List<CaseFullRun> runs) {
+        double avg = runs.stream().mapToDouble(r -> r.finalScore().getFinalScore()).average().orElse(0.0);
+        long vetoed = runs.stream().filter(r -> r.finalScore().isVeto()).count();
+        sb.append("## Summary\n\n");
+        sb.append("- Avg final score: ").append(String.format(Locale.ROOT, "%.2f", avg)).append(" / 100\n");
+        sb.append("- Vetoed (final 0): ").append(vetoed).append(" / ").append(runs.size()).append("\n\n");
+    }
+
+    private void appendFullPerCase(StringBuilder sb, List<CaseFullRun> runs) {
+        sb.append("## Per-Case Detail\n\n");
+        sb.append("| ID | Strategy | Rubric | Render | Judge | Final |\n");
+        sb.append("| --- | --- | --- | --- | --- | --- |\n");
+        for (CaseFullRun r : runs) {
+            EvalCase c = r.evalCase();
+            sb.append("| ").append(c.getId());
+            sb.append(" | ").append(c.getExpectedStrategy());
+            sb.append(" | ").append(formatContrib(r, "rubric"));
+            sb.append(" | ").append(formatContrib(r, "render"));
+            sb.append(" | ").append(formatContrib(r, "llm-judge"));
+            sb.append(" | ").append(String.format(Locale.ROOT, "%.1f", r.finalScore().getFinalScore()));
+            sb.append(" |\n");
+        }
+        sb.append("\n");
+    }
+
+    private static String formatContrib(CaseFullRun r, String dim) {
+        for (Scorer.ScoreContribution c : r.finalScore().getContributions()) {
+            if (dim.equals(c.getDimension())) {
+                if (c.isVeto()) {
+                    return "❌";
+                }
+                return String.format(Locale.ROOT, "%.0f", c.getScore());
+            }
+        }
+        return "—";
+    }
+
+    private static void write(Path output, String content) {
+        try {
+            if (output.getParent() != null) {
+                Files.createDirectories(output.getParent());
+            }
+            Files.writeString(output, content);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to write report: " + output, e);
+        }
+    }
+
+    /** Phase 0：单维度结果。 */
+    public record CaseRun(EvalCase evalCase,
+                          AgentInvoker.InvocationResult invocation,
+                          RubricScorer.CaseScore score) {
+    }
+
+    /** Phase 5：三维结果。 */
+    public record CaseFullRun(EvalCase evalCase,
+                              AgentInvoker.InvocationResult invocation,
+                              CompositeScorer.CaseFinalScore finalScore) {
     }
 }

@@ -25,6 +25,6 @@
 | [0002](./0002-remove-langchain4j-patch.md) | 升级 LangChain4j 1.1.0→1.5.1 + 删除源码覆盖 patch | Accepted | Phase 2 |
 | [0004](./0004-tool-safety.md) | Tool Calling 三层安全防御体系 | Accepted | Phase 3 |
 | [0003](./0003-ai-router-two-layer.md) | AI Router 采用规则 + LLM 兜底两层架构 | Accepted | Phase 4 |
-| 0005 | 引入 Prompt 评测体系替代凭感觉调优 | _待写_ | Phase 5 |
+| [0005](./0005-evaluation-automation.md) | 评测体系自动化（三维评分 + diff + CI） | Accepted | Phase 5 |
 | 0006 | 当前阶段不引入 MinIO/OSS 对象存储 | _待写_ | 收尾 |
 | 0007 | 不引入 LangGraph4j Workflow 作为主路径 | _待写_ | 收尾 |

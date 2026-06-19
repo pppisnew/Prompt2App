@@ -29,3 +29,4 @@ YYYY-MM-DD-<phase>-<slug>.md
 | 2026-06-18 | Phase 2 | [删除 LangChain4j 源码覆盖 patch + 升级到 1.5.1](./2026-06-18-phase2-remove-langchain4j-patch.md) | 项目作者 + AI | ✅ 完成 |
 | 2026-06-18 | Phase 3 | [Tool Calling 三层安全防御 + 27 单测](./2026-06-18-phase3-tool-safety.md) | 项目作者 + AI | ✅ 完成 |
 | 2026-06-18 | Phase 4 | [AI Router 规则 + LLM 兜底两层架构](./2026-06-18-phase4-router.md) | 项目作者 + AI | ✅ 完成 |
+| 2026-06-19 | Phase 5 | [评测体系自动化（三维评分 + Diff + CI）](./2026-06-19-phase5-eval-automation.md) | 项目作者 + AI | ✅ 完成 |
