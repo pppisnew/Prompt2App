@@ -5,7 +5,9 @@ import com.qcloud.cos.ClientConfig;
 import com.qcloud.cos.auth.BasicCOSCredentials;
 import com.qcloud.cos.auth.COSCredentials;
 import com.qcloud.cos.region.Region;
+import jakarta.annotation.PostConstruct;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,9 +15,10 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * 腾讯云COS配置类
- * 
+ *
  * @author yupi
  */
+@Slf4j
 @Configuration
 @ConfigurationProperties(prefix = "cos.client")
 @Data
@@ -45,6 +48,13 @@ public class CosClientConfig {
      * 桶名
      */
     private String bucket;
+
+    @PostConstruct
+    public void logConfig() {
+        log.info("[CosClientConfig] bucket={}, region={}, host={}, secretId={}...(masked)",
+                bucket, region, host,
+                secretId != null ? secretId.substring(0, Math.min(8, secretId.length())) + "***" : "(null)");
+    }
 
     @Bean
     public COSClient cosClient() {

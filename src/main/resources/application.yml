@@ -65,7 +65,7 @@ langchain4j:
       base-url: ${LLM_CHAT_BASE_URL:https://api.deepseek.com}
       api-key: ${LLM_CHAT_API_KEY:}
       model-name: ${LLM_CHAT_MODEL:deepseek-chat}
-      max-tokens: ${LLM_CHAT_MAX_TOKENS:8192}
+      max-tokens: ${LLM_CHAT_MAX_TOKENS:16384}
       log-requests: ${LLM_CHAT_LOG_REQUESTS:true}
       log-responses: ${LLM_CHAT_LOG_RESPONSES:true}
       max-retries: ${LLM_CHAT_MAX_RETRIES:3}
@@ -73,7 +73,7 @@ langchain4j:
       base-url: ${LLM_STREAM_BASE_URL:https://api.deepseek.com}
       api-key: ${LLM_STREAM_API_KEY:}
       model-name: ${LLM_STREAM_MODEL:deepseek-chat}
-      max-tokens: ${LLM_STREAM_MAX_TOKENS:8192}
+      max-tokens: ${LLM_STREAM_MAX_TOKENS:16384}
       log-requests: ${LLM_STREAM_LOG_REQUESTS:true}
       log-responses: ${LLM_STREAM_LOG_RESPONSES:true}
     # 推理模型（复杂任务）
