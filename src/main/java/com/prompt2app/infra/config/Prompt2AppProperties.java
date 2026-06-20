@@ -44,6 +44,24 @@ public class Prompt2AppProperties {
         log.info("[Prompt2AppProperties] storage.codeDeployHost={}", storage.getCodeDeployHost());
         log.info("[Prompt2AppProperties] tool.maxPerSession={}, tool.maxPerFile={}",
                 tool.getMaxPerSession(), tool.getMaxPerFile());
+
+        // 兜底校验：yml 占位符未解析时会留下字面量 ${...}，启动时立即暴露
+        validateNoPlaceholderLeak(storage.getCodeOutputDir(), "storage.code-output-dir");
+        validateNoPlaceholderLeak(storage.getCodeDeployDir(), "storage.code-deploy-dir");
+        validateNoPlaceholderLeak(storage.getScreenshotsDir(), "storage.screenshots-dir");
+    }
+
+    /**
+     * 防止 application.yml 的 ${VAR:default} 占位符因拼写错误或变量未注册而原样留存。
+     * 历史教训：Phase 8 写 ${user.dir} 时 Spring 不会解析它（System property 不在 Environment 中），
+     * 字面量 ${user.dir} 被传入 FileUtil.mkdir，运行时才以 "No such file or directory" 暴雷。
+     */
+    private static void validateNoPlaceholderLeak(String value, String name) {
+        if (value != null && value.contains("${")) {
+            throw new IllegalStateException(String.format(
+                    "配置 %s 的值 \"%s\" 含未解析的占位符；请检查 application.yml 或 .env。",
+                    name, value));
+        }
     }
 
     @Data

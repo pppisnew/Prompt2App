@@ -175,3 +175,147 @@ if (chatMemory.messages().isEmpty()) {        // Redis miss
 - ADR-0010（配置统一化）触发整条故障链，但本身决策不变
 - LangChain4j 文档 · ChatMemoryStore 接口
 - redis-stack 与 RedisJSON 模块官方说明（备查，本次不引）
+
+---
+
+## 9. 教训与回归修复（2026-06-20 增补）
+
+### 9.1 自己引入的回归
+
+ADR-0011 删除 `langchain4j-community-redis-spring-boot-starter` 时，**未核对传递依赖被谁使用**。该 starter 通过传递依赖提供了 `spring-boot-starter-data-redis`，而：
+
+- `RedisCacheManagerConfig` 需要 `RedisConnectionFactory`（来自 spring-boot-starter-data-redis 的自动配置）
+- `AppController` 使用 `@Cacheable`（同样需要 Spring Cache + Redis backend）
+- `spring-session-data-redis` 仅声明 session API，**不**带连接池自动配置
+
+删除 starter 后启动应用立刻抛：
+
+```
+Error creating bean with name 'redisCacheManagerConfig'
+A component required a bean of type
+'org.springframework.data.redis.connection.RedisConnectionFactory'
+that could not be found.
+```
+
+### 9.2 修复
+
+`pom.xml` 显式补回 `spring-boot-starter-data-redis`：
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+```
+
+意图清晰：之前是"通过 langchain4j-community-redis 间接拿到"，现在是"显式声明因为真的需要"。
+
+### 9.3 流程教训（写进未来删依赖 checklist）
+
+**删依赖时必须核传递依赖被谁用**——`mvn dependency:tree` 看 `<dependency>` 是不是别人的 transitive source。步骤：
+
+1. `mvn dependency:tree | grep -B5 <artifactId>` 找出谁传递引入了它
+2. 用 `mvn dependency:analyze` 找 "Used undeclared dependencies"（项目用了但没显式声明）和 "Unused declared dependencies"（声明了但没用）
+3. 删之前在测试或本地启动一次完整流程验证
+4. 删之后立即 `mvn -q clean compile` + 启动 smoke test
+
+> 我本次只做了第 3、4 步的"compile + 子集测试"，但**没启动过应用**——`@SpringBootTest` 的子集不覆盖 `RedisCacheManagerConfig` 的 Bean 装配路径，导致回归逃逸到运行时。
+
+### 9.4 是否改变 ADR-0011 的决策？
+
+**不改变**。`RedisConnectionFactory` 不是 RedisChatMemoryStore 路径的专属——它服务于 `@Cacheable` / Spring Cache / Spring Session，本就该有。补回 `spring-boot-starter-data-redis` 是修复回归，不是推翻"删除 RedisChatMemoryStore"的决策。决策依然成立，只是删除时少做了一步传递依赖检查。
+
+---
+
+## 10. 事故 #4：`${user.dir}` 占位符不被 Spring 解析（2026-06-20 增补）
+
+### 10.1 现象
+
+应用启动成功，但用户调用 AI 代码生成功能时抛：
+
+```
+ERROR ... AiCodeGeneratorFacade: 保存失败: IOException: No such file or directory
+```
+
+并且前端 SSE 页面"卡死"——一直显示"生成中..."不结束。
+
+### 10.2 根因
+
+`application.yml` 写：
+
+```yaml
+prompt2app:
+  storage:
+    code-output-dir: ${PROMPT2APP_CODE_OUTPUT_DIR:${user.dir}/tmp/code_output}
+```
+
+意图：环境变量没设时 fallback 到 `user.dir/tmp/code_output`。**但**——
+
+Spring 的 `${...}` 占位符只解析 `Environment` 中注册过的 property。`user.dir` 是 **JVM System property**（`System.getProperty("user.dir")`），Spring Boot **默认不把所有 System properties 暴露到 Environment**（除非用 `spring.main.allow-circular-references`-类的开关，或显式注册 `SystemEnvironmentPropertySource`）。
+
+结果：`${user.dir}` 不被解析，字面量 `${user.dir}/tmp/code_output` 原样传给 `Prompt2AppProperties.storage.codeOutputDir`。`CodeFileSaverTemplate.buildUniqueDir` 调 `FileUtil.mkdir("${user.dir}/tmp/code_output/html_123")`——创建了一个**字面名为 `${user.dir}`** 的目录；后续 `FileUtil.writeString` 写到不存在的子目录下，抛 IOException。
+
+### 10.3 第二层 bug：页面卡死
+
+`AiCodeGeneratorFacade.processCodeStream` 的 `doOnComplete`：
+
+```java
+}).doOnComplete(() -> {
+    try {
+        ...
+        codeFileSaverExecutor.executeSaver(...);  // 抛 IOException
+    } catch (Exception e) {
+        log.error("保存失败: {}", e.getMessage());  // 吞了！
+    }
+});
+```
+
+`catch (Exception)` **吞掉了异常**，没有向 SSE Flux 下游传播 `onError` 信号——前端订阅者永远等不到完成或失败，UI 卡在"生成中..."。
+
+这是 **Phase 8 之前就存在的代码缺陷**（不是 ADR-0011 引入），事故 #4 把它顶了出来。本次按 Charter §3「克制」原则**不夹带修**，记入 backlog。
+
+### 10.4 修复
+
+**A. `application.yml`** —— 占位符 fallback 改为空字符串：
+
+```yaml
+prompt2app:
+  storage:
+    code-output-dir: ${PROMPT2APP_CODE_OUTPUT_DIR:}
+    code-deploy-dir: ${PROMPT2APP_CODE_DEPLOY_DIR:}
+    screenshots-dir: ${PROMPT2APP_SCREENSHOTS_DIR:}
+```
+
+留空时，`Prompt2AppProperties` 的 Java 字段默认值 `System.getProperty("user.dir") + "/tmp/code_output"` 生效——这是真正能拿到工作目录的途径。
+
+**B. `Prompt2AppProperties`** —— 启动期占位符泄露校验：
+
+```java
+@PostConstruct
+public void logEffectiveConfig() {
+    log.info(...);
+    validateNoPlaceholderLeak(storage.getCodeOutputDir(), "storage.code-output-dir");
+    validateNoPlaceholderLeak(storage.getCodeDeployDir(), "storage.code-deploy-dir");
+    validateNoPlaceholderLeak(storage.getScreenshotsDir(), "storage.screenshots-dir");
+}
+
+private static void validateNoPlaceholderLeak(String value, String name) {
+    if (value != null && value.contains("${")) {
+        throw new IllegalStateException(String.format(
+                "配置 %s 的值 \"%s\" 含未解析的占位符；请检查 application.yml 或 .env。",
+                name, value));
+    }
+}
+```
+
+启动时若任一 storage 路径含 `${`，立刻 `IllegalStateException` 崩——而不是运行到 `FileUtil.mkdir` 才暴雷。
+
+### 10.5 教训（写进未来配置 checklist）
+
+1. **不要在 `application.yml` 用 `${user.dir}` / `${user.home}` 等 JVM System property 占位符**——它们不在 Spring Environment 中
+2. 如果需要工作目录，用 Java 默认值兜底（`System.getProperty("user.dir")` 在 Java 代码里是 OK 的）
+3. 关键路径配置加启动期校验——fail-fast 优于运行时暴雷
+
+### 10.6 是否改变 ADR-0011 决策？
+
+**不改变**。事故 #4 是 ADR-0010 配置外部化时 yml 写法的副作用，与 ADR-0011 删 RedisChatMemoryStore 无关。但因为它出现在 ADR-0011 启动事故链的下游（用户启动应用 → 调用 AI 生成 → 报错），所以记在此处作为整条事故链的收尾。

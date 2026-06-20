@@ -117,11 +117,15 @@ code:
   deploy-host: ${CODE_DEPLOY_HOST:http://localhost}
 
 # Prompt2App 业务配置（ADR-0010）
+# 注意：路径变量留空时回落到 Prompt2AppProperties 中的 Java 默认值
+# （System.getProperty("user.dir") + "/tmp/..."）。
+# 不能用 ${user.dir} 占位符——Spring 不会把 System.getProperty 暴露为 Environment property，
+# 字面量 ${user.dir} 会被原样传入，导致 FileUtil.mkdir 创建名为 "${user.dir}" 的奇葩目录。
 prompt2app:
   storage:
-    code-output-dir: ${PROMPT2APP_CODE_OUTPUT_DIR:${user.dir}/tmp/code_output}
-    code-deploy-dir: ${PROMPT2APP_CODE_DEPLOY_DIR:${user.dir}/tmp/code_deploy}
-    screenshots-dir: ${PROMPT2APP_SCREENSHOTS_DIR:${user.dir}/tmp/screenshots}
+    code-output-dir: ${PROMPT2APP_CODE_OUTPUT_DIR:}
+    code-deploy-dir: ${PROMPT2APP_CODE_DEPLOY_DIR:}
+    screenshots-dir: ${PROMPT2APP_SCREENSHOTS_DIR:}
     code-deploy-host: ${PROMPT2APP_CODE_DEPLOY_HOST:${code.deploy-host}}
   tool:
     max-per-session: ${PROMPT2APP_TOOL_MAX_PER_SESSION:50}

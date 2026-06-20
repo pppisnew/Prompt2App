@@ -63,6 +63,13 @@
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-data-redis</artifactId>
         </dependency>
+        <!-- Spring Data Redis：提供 RedisConnectionFactory 自动配置 + @Cacheable Redis backend
+             （ADR-0011 删 langchain4j-community-redis-spring-boot-starter 后显式补回，
+              该 starter 原本传递依赖 spring-boot-starter-data-redis；ADR-0011 §7 已记教训） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
         <!-- Redisson -->
         <dependency>
             <groupId>org.redisson</groupId>
