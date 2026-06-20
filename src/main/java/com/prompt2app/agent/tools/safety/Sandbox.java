@@ -70,6 +70,16 @@ public final class Sandbox {
     /** 解析路径用于 write：目标可不存在，但已存在的祖先目录要 canonical 校验。 */
     public Path resolveForWrite(String relativePath) {
         Path resolved = resolveBasic(relativePath);
+        // workDir 自身可能尚未创建（如 Vue 项目首次写入 package.json 前目录不存在）。
+        // 此时不存在软链接逃逸风险（目录根本不存在），先创建再校验。
+        if (!Files.exists(workDir)) {
+            try {
+                Files.createDirectories(workDir);
+            } catch (IOException e) {
+                throw new ToolSafetyException(Reason.PATH_INVALID, relativePath,
+                        "failed to create workDir: " + e.getMessage());
+            }
+        }
         // 找到最近的已存在祖先做 toRealPath 校验（防止软链接祖先逃逸）
         Path ancestor = resolved;
         while (ancestor != null && !Files.exists(ancestor)) {
@@ -78,6 +88,16 @@ public final class Sandbox {
         if (ancestor != null && !ancestor.equals(workDir)) {
             // 若最近存在的祖先就是 workDir 自身则跳过（已在 resolveBasic 里校验）
             verifyCanonical(ancestor, relativePath);
+        }
+        // 确保目标文件的父目录存在（如 src/main.js 需要 src/ 目录）
+        Path parent = resolved.getParent();
+        if (parent != null && !Files.exists(parent)) {
+            try {
+                Files.createDirectories(parent);
+            } catch (IOException e) {
+                throw new ToolSafetyException(Reason.PATH_INVALID, relativePath,
+                        "failed to create parent dir: " + e.getMessage());
+            }
         }
         return resolved;
     }
