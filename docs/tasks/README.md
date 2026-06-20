@@ -36,3 +36,4 @@ YYYY-MM-DD-<phase>-<slug>.md
 | 2026-06-19 | Phase 8（增量） | [启动事故复盘：DB 自动建库 + Redis namespace 隔离](./2026-06-19-phase8-bootstrap-incident-fix.md) | 项目作者 + AI | ✅ 完成（最小修复，未立 ADR）|
 | 2026-06-19 | Phase 8（增量 #2） | [ADR-0011 删除 RedisChatMemoryStore（启动事故链 #3）](./2026-06-19-phase8-adr0011-drop-redis-chat-memory.md) | 项目作者 + AI | ✅ 完成 |
 | 2026-06-20 | Phase 8（增量 #3） | [事故链 #6–#10：静态资源双目录 + 前端 URL 统一 + metric 列名 + COS 诊断（ADR-0012）](./2026-06-20-phase8-incident-chain-6-to-10.md) | 项目作者 + AI | ✅ 完成 |
+| 2026-06-20 | 前端 | [去品牌化 + GlobalHeader/Footer 组件重构（ADR-0009 延伸）](./2026-06-20-frontend-rebrand-and-component-refactor.md) | 项目作者 + AI | ✅ 完成 |

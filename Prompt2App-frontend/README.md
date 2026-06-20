@@ -1,6 +1,8 @@
-# 鱼皮 AI 代码生成器 - 前端
+# Prompt2App · 前端
 
-这是一个基于 Vue 3 + TypeScript + Ant Design Vue 的 AI 代码生成器前端项目。用户可以通过与 AI 对话来创建网站应用、查看生成的网站应用效果、部署应用、管理个人应用等。
+Prompt2App 是一个 AI 网页生成平台。用户通过自然语言对话，让 AI 生成完整的网站应用代码，并支持实时预览、部署和管理。
+
+前端基于 Vue 3 + TypeScript + Ant Design Vue 构建，通过 SSE 流式接收 AI 生成的代码并实时渲染预览。
 
 ## 功能特性
 
