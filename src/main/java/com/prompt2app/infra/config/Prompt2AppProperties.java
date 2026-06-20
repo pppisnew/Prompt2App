@@ -2,6 +2,8 @@ package com.prompt2app.infra.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
+import lombok.Setter;
+import lombok.AccessLevel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -44,36 +46,46 @@ public class Prompt2AppProperties {
         log.info("[Prompt2AppProperties] storage.codeDeployHost={}", storage.getCodeDeployHost());
         log.info("[Prompt2AppProperties] tool.maxPerSession={}, tool.maxPerFile={}",
                 tool.getMaxPerSession(), tool.getMaxPerFile());
-
-        // 兜底校验：yml 占位符未解析时会留下字面量 ${...}，启动时立即暴露
-        validateNoPlaceholderLeak(storage.getCodeOutputDir(), "storage.code-output-dir");
-        validateNoPlaceholderLeak(storage.getCodeDeployDir(), "storage.code-deploy-dir");
-        validateNoPlaceholderLeak(storage.getScreenshotsDir(), "storage.screenshots-dir");
-    }
-
-    /**
-     * 防止 application.yml 的 ${VAR:default} 占位符因拼写错误或变量未注册而原样留存。
-     * 历史教训：Phase 8 写 ${user.dir} 时 Spring 不会解析它（System property 不在 Environment 中），
-     * 字面量 ${user.dir} 被传入 FileUtil.mkdir，运行时才以 "No such file or directory" 暴雷。
-     */
-    private static void validateNoPlaceholderLeak(String value, String name) {
-        if (value != null && value.contains("${")) {
-            throw new IllegalStateException(String.format(
-                    "配置 %s 的值 \"%s\" 含未解析的占位符；请检查 application.yml 或 .env。",
-                    name, value));
-        }
     }
 
     @Data
     public static class Storage {
-        /** AI 代码生成输出根目录 */
-        private String codeOutputDir = System.getProperty("user.dir") + "/tmp/code_output";
+        /** AI 代码生成输出根目录（@Setter(NONE)：手写 setter 做空串/占位符兜底，避免 Lombok 覆盖） */
+        @Setter(AccessLevel.NONE)
+        private String codeOutputDir;
         /** 应用部署根目录（提供给静态资源访问） */
-        private String codeDeployDir = System.getProperty("user.dir") + "/tmp/code_deploy";
+        @Setter(AccessLevel.NONE)
+        private String codeDeployDir;
         /** 网页截图保存目录 */
-        private String screenshotsDir = System.getProperty("user.dir") + "/tmp/screenshots";
+        @Setter(AccessLevel.NONE)
+        private String screenshotsDir;
         /** 部署 host（拼接静态访问 URL 的前缀） */
         private String codeDeployHost = "http://localhost";
+
+        /**
+         * Setter 兜底：Spring Boot @ConfigurationProperties binding 会调它。
+         * yml 给的空串 / null / 含未解析占位符 ${...} 时，回落到 System.getProperty("user.dir")。
+         * 历史教训：Spring Boot 把空字符串视为"已设值"，字段默认值根本没机会生效；
+         * 又 ${user.dir} 占位符不被解析会变字面量。两者都要在 setter 处理掉。
+         */
+        public void setCodeOutputDir(String codeOutputDir) {
+            this.codeOutputDir = resolve(codeOutputDir, "tmp/code_output");
+        }
+
+        public void setCodeDeployDir(String codeDeployDir) {
+            this.codeDeployDir = resolve(codeDeployDir, "tmp/code_deploy");
+        }
+
+        public void setScreenshotsDir(String screenshotsDir) {
+            this.screenshotsDir = resolve(screenshotsDir, "tmp/screenshots");
+        }
+
+        private static String resolve(String configured, String defaultSub) {
+            if (configured == null || configured.isBlank() || configured.contains("${")) {
+                return System.getProperty("user.dir") + "/" + defaultSub;
+            }
+            return configured;
+        }
     }
 
     @Data

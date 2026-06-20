@@ -274,7 +274,7 @@ Spring 的 `${...}` 占位符只解析 `Environment` 中注册过的 property。
 
 这是 **Phase 8 之前就存在的代码缺陷**（不是 ADR-0011 引入），事故 #4 把它顶了出来。本次按 Charter §3「克制」原则**不夹带修**，记入 backlog。
 
-### 10.4 修复
+### 10.4 修复（第一次尝试 — b13146a，未生效）
 
 **A. `application.yml`** —— 占位符 fallback 改为空字符串：
 
@@ -288,34 +288,72 @@ prompt2app:
 
 留空时，`Prompt2AppProperties` 的 Java 字段默认值 `System.getProperty("user.dir") + "/tmp/code_output"` 生效——这是真正能拿到工作目录的途径。
 
-**B. `Prompt2AppProperties`** —— 启动期占位符泄露校验：
+**B. `Prompt2AppProperties`** —— 启动期占位符泄露校验（路径含 `${` 立刻 `IllegalStateException` 崩）。
+
+### 10.5 第一次修复未生效的根因
+
+用户重启应用再次调用 AI 生成，仍报 `IOException: No such file or directory`，且 `/Volumes/SSD/Dev/project/heavy/yu-pi/Prompt2App/tmp/code_output` 目录从未被创建。
+
+**真因**：Spring Boot `@ConfigurationProperties` binding 把 **空字符串视为"已设值"**，直接调 setter 把字段设为 `""`，**Java 字段默认值根本没有机会生效**。所以：
+
+- `storage.codeOutputDir = ""` （空字符串，不是 `null`）
+- `CodeFileSaverTemplate.buildUniqueDir` 拼 `"" + "/" + "html_123"` = `/html_123`
+- `FileUtil.mkdir("/html_123")` —— 这是要在文件系统根目录创建！macOS 沙箱权限不足
+- `FileUtil.writeString` 写到 `/html_123/index.html` 抛 `No such file or directory`
+
+第一次修复的 `validateNoPlaceholderLeak` 校验也没触发——因为这次根本没有 `${` 字面量了，只是空字符串。
+
+### 10.6 修复（第二次尝试 — 升级版）
+
+**核心思路**：在 setter 里做兜底，让 Spring Boot binding 调 setter 时就把空串 / null / 占位符字面量统一转成真实路径。
 
 ```java
-@PostConstruct
-public void logEffectiveConfig() {
-    log.info(...);
-    validateNoPlaceholderLeak(storage.getCodeOutputDir(), "storage.code-output-dir");
-    validateNoPlaceholderLeak(storage.getCodeDeployDir(), "storage.code-deploy-dir");
-    validateNoPlaceholderLeak(storage.getScreenshotsDir(), "storage.screenshots-dir");
-}
+@Data
+public static class Storage {
+    @Setter(AccessLevel.NONE)   // 关键：排除 Lombok 自动 setter
+    private String codeOutputDir;
+    @Setter(AccessLevel.NONE)
+    private String codeDeployDir;
+    @Setter(AccessLevel.NONE)
+    private String screenshotsDir;
+    private String codeDeployHost = "http://localhost";
 
-private static void validateNoPlaceholderLeak(String value, String name) {
-    if (value != null && value.contains("${")) {
-        throw new IllegalStateException(String.format(
-                "配置 %s 的值 \"%s\" 含未解析的占位符；请检查 application.yml 或 .env。",
-                name, value));
+    public void setCodeOutputDir(String codeOutputDir) {
+        this.codeOutputDir = resolve(codeOutputDir, "tmp/code_output");
+    }
+    public void setCodeDeployDir(String codeDeployDir) {
+        this.codeDeployDir = resolve(codeDeployDir, "tmp/code_deploy");
+    }
+    public void setScreenshotsDir(String screenshotsDir) {
+        this.screenshotsDir = resolve(screenshotsDir, "tmp/screenshots");
+    }
+
+    private static String resolve(String configured, String defaultSub) {
+        if (configured == null || configured.isBlank() || configured.contains("${")) {
+            return System.getProperty("user.dir") + "/" + defaultSub;
+        }
+        return configured;
     }
 }
 ```
 
-启动时若任一 storage 路径含 `${`，立刻 `IllegalStateException` 崩——而不是运行到 `FileUtil.mkdir` 才暴雷。
+`@Setter(AccessLevel.NONE)` 是关键——不加的话 `@Data` 会自动生成 setter 覆盖手写的，兜底逻辑不生效。
 
-### 10.5 教训（写进未来配置 checklist）
+`resolve()` 统一处理三种坏值：
+1. `null` —— Spring Boot 未配置该 key 时
+2. 空字符串 `""` / 纯空白 —— yml 给了 `${VAR:}` 但 VAR 未设时
+3. 含 `${` 字面量 —— 占位符未解析时（防御性，理论上 Spring 已解析过）
+
+调用方零改动——`getCodeOutputDir()` 等 getter 名字不变，返回的就是兜底后的真实路径。
+
+### 10.7 教训（写进未来配置 checklist）
 
 1. **不要在 `application.yml` 用 `${user.dir}` / `${user.home}` 等 JVM System property 占位符**——它们不在 Spring Environment 中
-2. 如果需要工作目录，用 Java 默认值兜底（`System.getProperty("user.dir")` 在 Java 代码里是 OK 的）
-3. 关键路径配置加启动期校验——fail-fast 优于运行时暴雷
+2. **不要假设 Java 字段默认值会在 yml 给空串时生效**——Spring Boot binding 把空串当"已设值"，字段默认值被覆盖
+3. **需要兜底逻辑时，写在 setter 里**，而不是字段默认值；用 `@Setter(AccessLevel.NONE)` 防止 Lombok 覆盖
+4. **关键路径配置加启动期校验**——fail-fast 优于运行时暴雷（但校验逻辑要正确，第一次的 `validateNoPlaceholderLeak` 只检 `${`，漏了空串场景）
+5. **修复后必须实际启动应用跑端到端流程**——子集单测不覆盖 `FileUtil.mkdir` 真实文件系统行为
 
-### 10.6 是否改变 ADR-0011 决策？
+### 10.8 是否改变 ADR-0011 决策？
 
-**不改变**。事故 #4 是 ADR-0010 配置外部化时 yml 写法的副作用，与 ADR-0011 删 RedisChatMemoryStore 无关。但因为它出现在 ADR-0011 启动事故链的下游（用户启动应用 → 调用 AI 生成 → 报错），所以记在此处作为整条事故链的收尾。
+**不改变**。事故 #5 是 ADR-0010 配置外部化时 yml 写法的副作用，与 ADR-0011 删 RedisChatMemoryStore 无关。但因为它出现在 ADR-0011 启动事故链的下游（用户启动应用 → 调用 AI 生成 → 报错），所以记在此处作为整条事故链的收尾。
