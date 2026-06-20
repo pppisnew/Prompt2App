@@ -52,6 +52,23 @@
 
 ---
 
+## 事故修复链收尾（2026-06-20）
+
+Phase 8 合入后用户端到端测试暴露事故链 #1–#10，已全部修复：
+
+| # | 事故 | ADR / Task Record |
+| --- | --- | --- |
+| 1–2 | DB 自动建库 + Redis namespace 隔离 | [task](../tasks/2026-06-19-phase8-bootstrap-incident-fix.md) |
+| 3 | RedisChatMemoryStore 删除 | [ADR-0011](../adr/0011-drop-redis-chat-memory-store.md) |
+| 4–5 | 依赖回归 + `${user.dir}` 占位符泄露 | ADR-0011 §9–§10 |
+| 6–8 | 静态资源双目录 + 前端 URL 统一 | [ADR-0012](../adr/0012-static-resource-dual-dir-and-url-unification.md) |
+| 9 | generation_metric 列名 snake_case | [task](../tasks/2026-06-20-phase8-incident-chain-6-to-10.md) |
+| 10 | COS 诊断（误诊，COS 本身正常） | [task](../tasks/2026-06-20-phase8-incident-chain-6-to-10.md) |
+
+**治理补救**：事故 #6–#8 的代码修复先于 ADR 完成（违反 Charter §4 §5），ADR-0012 + task record 为事后补写。ADR-0012 §7 记录流程教训。
+
+---
+
 ## 下一 Phase 预告
 
 无固定计划。Phase 8 是按需启动的"v1.0 后增量"。后续 Phase 9+ 按需 + 走 ADR + 走 Charter §6 修订流程启动。
@@ -60,3 +77,4 @@
 - 配置项校验（`@Validated` + JSR-380 约束）
 - 配置审计 endpoint（`/actuator/configprops`）
 - 多环境密钥的 Vault / Sealed Secrets 集成（仅当对外服务化时考虑）
+- `AiCodeGeneratorFacade.processCodeStream` 的 `catch(Exception)` 吞异常不向 SSE 透传 `onError`（backlog，记于 ADR-0011 §10.3）

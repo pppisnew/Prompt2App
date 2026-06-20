@@ -35,3 +35,4 @@ YYYY-MM-DD-<phase>-<slug>.md
 | 2026-06-19 | Phase 8 | [配置统一化（ADR-0010 + spring-dotenv + 7 调用点迁移）](./2026-06-19-phase8-config-unification.md) | 项目作者 + AI | ✅ 完成（v1.0→v1.1）|
 | 2026-06-19 | Phase 8（增量） | [启动事故复盘：DB 自动建库 + Redis namespace 隔离](./2026-06-19-phase8-bootstrap-incident-fix.md) | 项目作者 + AI | ✅ 完成（最小修复，未立 ADR）|
 | 2026-06-19 | Phase 8（增量 #2） | [ADR-0011 删除 RedisChatMemoryStore（启动事故链 #3）](./2026-06-19-phase8-adr0011-drop-redis-chat-memory.md) | 项目作者 + AI | ✅ 完成 |
+| 2026-06-20 | Phase 8（增量 #3） | [事故链 #6–#10：静态资源双目录 + 前端 URL 统一 + metric 列名 + COS 诊断（ADR-0012）](./2026-06-20-phase8-incident-chain-6-to-10.md) | 项目作者 + AI | ✅ 完成 |

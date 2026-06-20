@@ -30,3 +30,4 @@
 | [0007](./0007-no-langgraph4j-workflow.md) | 不引入 LangGraph4j Workflow 作为主路径 | Accepted | Phase 7 |
 | [0010](./0010-config-unification.md) | 配置统一化（.env + Spring profiles + Prompt2AppProperties） | Accepted | Phase 8（v1.1 触发） |
 | [0011](./0011-drop-redis-chat-memory-store.md) | 删除 RedisChatMemoryStore：未生效的依赖应及时回收 | Accepted | Phase 8（增量 / 启动事故链 #3） |
+| [0012](./0012-static-resource-dual-dir-and-url-unification.md) | StaticResourceController 双目录 fallback + 前端 URL 策略统一 | Accepted | Phase 8（增量 / 启动事故链 #6–#8） |
