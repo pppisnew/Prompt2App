@@ -67,21 +67,40 @@ public class StaticResourceController {
                 resourcePath = "/index.html";
             }
 
-            // 3. 构建文件路径：从 codeDeployDir（不是 codeOutputDir）
-            String filePath = properties.getStorage().getCodeDeployDir() + "/" + deployKey + resourcePath;
-            File file = new File(filePath);
-            if (!file.exists() || !file.isFile()) {
+            // 3. 构建文件路径：优先从 codeDeployDir（部署后的应用），fallback 到 codeOutputDir（生成后未部署的预览）
+            //    两条路径共用此 controller：
+            //    - 部署后访问：key=random6（如 7b9Hln），文件在 codeDeployDir/{key}/
+            //    - 生成后预览：key=html_{appId}（如 html_425860387930632192），文件在 codeOutputDir/{key}/
+            File file = resolveFile(deployKey, resourcePath);
+            if (file == null) {
                 return ResponseEntity.notFound().build();
             }
 
             // 4. 返回文件资源
             Resource resource = new FileSystemResource(file);
             return ResponseEntity.ok()
-                    .header("Content-Type", getContentTypeWithCharset(filePath))
+                    .header("Content-Type", getContentTypeWithCharset(file.getAbsolutePath()))
                     .body(resource);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    /**
+     * 按 deployDir → outputDir 顺序查找文件，返回第一个存在的 File，都不存在返回 null。
+     */
+    private File resolveFile(String deployKey, String resourcePath) {
+        String deployPath = properties.getStorage().getCodeDeployDir() + "/" + deployKey + resourcePath;
+        File deployFile = new File(deployPath);
+        if (deployFile.exists() && deployFile.isFile()) {
+            return deployFile;
+        }
+        String outputPath = properties.getStorage().getCodeOutputDir() + "/" + deployKey + resourcePath;
+        File outputFile = new File(outputPath);
+        if (outputFile.exists() && outputFile.isFile()) {
+            return outputFile;
+        }
+        return null;
     }
 
     /**
