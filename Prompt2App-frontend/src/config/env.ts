@@ -3,18 +3,18 @@
  */
 import {CodeGenTypeEnum} from "@/utils/codeGenTypes.ts";
 
-// 应用部署域名
-export const DEPLOY_DOMAIN = import.meta.env.VITE_DEPLOY_DOMAIN || 'http://localhost'
-
 // API 基础地址
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8123/api'
 
-// 静态资源地址
+// 静态资源地址（走后端 StaticResourceController @RequestMapping("/static")）
 export const STATIC_BASE_URL = `${API_BASE_URL}/static`
 
-// 获取部署应用的完整URL
+// 应用部署域名（保留向后兼容；实际部署访问统一走 STATIC_BASE_URL）
+export const DEPLOY_DOMAIN = import.meta.env.VITE_DEPLOY_DOMAIN || 'http://localhost'
+
+// 获取部署应用的完整 URL（走后端 StaticResourceController，与预览同源）
 export const getDeployUrl = (deployKey: string) => {
-  return `${DEPLOY_DOMAIN}/${deployKey}`
+  return `${STATIC_BASE_URL}/${deployKey}/`
 }
 
 // 获取静态资源预览URL
