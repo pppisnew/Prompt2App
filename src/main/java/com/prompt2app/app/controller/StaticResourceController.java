@@ -11,14 +11,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.HandlerMapping;
 
 import java.io.File;
 
 /**
  * 静态资源访问。
  *
- * <p>预览根目录由 {@link Prompt2AppProperties#getStorage()}.codeOutputDir 提供（ADR-0010）。
+ * <p>预览根目录由 {@link Prompt2AppProperties#getStorage()}.codeDeployDir 提供（ADR-0010）。
+ * 部署后的应用文件在 {@code <codeDeployDir>/<deployKey>/} 下（见 AppServiceImpl.deployApp）。
+ *
+ * <p>访问格式：{@code http://localhost:8123/api/static/{deployKey}[/{fileName}]}
  */
 @RestController
 @RequestMapping("/static")
@@ -28,35 +30,51 @@ public class StaticResourceController {
     private Prompt2AppProperties properties;
 
     /**
-     * 提供静态资源访问，支持目录重定向
-     * 访问格式：http://localhost:8123/api/static/{deployKey}[/{fileName}]
+     * 提供静态资源访问，支持目录重定向。
+     *
+     * <p>路径解析用 {@link HttpServletRequest#getRequestURI()} + context-path 去除，
+     * 不依赖 {@code PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE}（在 Spring Boot 3.x +
+     * context-path 下的行为有版本差异）。
      */
     @GetMapping("/{deployKey}/**")
     public ResponseEntity<Resource> serveStaticResource(
             @PathVariable String deployKey,
             HttpServletRequest request) {
         try {
-            // 获取资源路径
-            String resourcePath = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-            resourcePath = resourcePath.substring(("/static/" + deployKey).length());
-            // 如果是目录访问（不带斜杠），重定向到带斜杠的URL
+            // 1. 解析 context-path 之后、/static/{deployKey} 之后的资源子路径
+            //    例：getRequestURI() = /api/static/7b9Hln/index.html
+            //        contextPath    = /api
+            //        去掉 contextPath -> /static/7b9Hln/index.html
+            //        去掉 /static/{deployKey} -> /index.html
+            String requestUri = request.getRequestURI();
+            String contextPath = request.getContextPath();
+            String pathAfterContext = requestUri.startsWith(contextPath)
+                    ? requestUri.substring(contextPath.length())
+                    : requestUri;
+            String prefix = "/static/" + deployKey;
+            String resourcePath = pathAfterContext.startsWith(prefix)
+                    ? pathAfterContext.substring(prefix.length())
+                    : "";
+
+            // 2. 空路径或 / 结尾 → 视为目录访问，默认返回 index.html
             if (resourcePath.isEmpty()) {
+                // 不带斜杠访问 /static/{key} → 301 重定向到 /static/{key}/
                 HttpHeaders headers = new HttpHeaders();
-                headers.add("Location", request.getRequestURI() + "/");
+                headers.add("Location", requestUri + "/");
                 return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
             }
-            // 默认返回 index.html
             if (resourcePath.equals("/")) {
                 resourcePath = "/index.html";
             }
-            // 构建文件路径
-            String filePath = properties.getStorage().getCodeOutputDir() + "/" + deployKey + resourcePath;
+
+            // 3. 构建文件路径：从 codeDeployDir（不是 codeOutputDir）
+            String filePath = properties.getStorage().getCodeDeployDir() + "/" + deployKey + resourcePath;
             File file = new File(filePath);
-            // 检查文件是否存在
-            if (!file.exists()) {
+            if (!file.exists() || !file.isFile()) {
                 return ResponseEntity.notFound().build();
             }
-            // 返回文件资源
+
+            // 4. 返回文件资源
             Resource resource = new FileSystemResource(file);
             return ResponseEntity.ok()
                     .header("Content-Type", getContentTypeWithCharset(filePath))
@@ -67,7 +85,7 @@ public class StaticResourceController {
     }
 
     /**
-     * 根据文件扩展名返回带字符编码的 Content-Type
+     * 根据文件扩展名返回带字符编码的 Content-Type。
      */
     private String getContentTypeWithCharset(String filePath) {
         if (filePath.endsWith(".html")) return "text/html; charset=UTF-8";
