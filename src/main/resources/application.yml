@@ -113,8 +113,10 @@ dashscope:
   image-model: ${DASHSCOPE_IMAGE_MODEL:wan2.2-t2i-flash}
 
 # 部署路径（保持向后兼容：AppServiceImpl 仍读取 ${code.deploy-host}）
+# 默认值含端口 + context-path + /static 前缀，与 StaticResourceController @RequestMapping("/static") 对齐
+# 截图服务会访问此 URL 抓取部署后的页面，缺端口会导致 ERR_CONNECTION_REFUSED (80 端口无服务)
 code:
-  deploy-host: ${CODE_DEPLOY_HOST:http://localhost}
+  deploy-host: ${CODE_DEPLOY_HOST:http://localhost:8123/api/static}
 
 # Prompt2App 业务配置（ADR-0010）
 # 注意：路径变量留空时回落到 Prompt2AppProperties 中的 Java 默认值

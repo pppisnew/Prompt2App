@@ -59,8 +59,8 @@ public class Prompt2AppProperties {
         /** 网页截图保存目录 */
         @Setter(AccessLevel.NONE)
         private String screenshotsDir;
-        /** 部署 host（拼接静态访问 URL 的前缀） */
-        private String codeDeployHost = "http://localhost";
+        /** 部署 host（拼接静态访问 URL 的前缀，含端口 + context-path + /static） */
+        private String codeDeployHost = "http://localhost:8123/api/static";
 
         /**
          * Setter 兜底：Spring Boot @ConfigurationProperties binding 会调它。
