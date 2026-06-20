@@ -5,6 +5,10 @@
       <div v-else class="app-placeholder">
         <span>AI</span>
       </div>
+      <!-- 生成类型标签 -->
+      <span v-if="app.codeGenType" class="type-badge">
+        {{ formatCodeGenType(app.codeGenType) }}
+      </span>
       <div class="app-overlay">
         <a-space>
           <a-button type="primary" @click="handleViewChat">查看对话</a-button>
@@ -29,6 +33,8 @@
 </template>
 
 <script setup lang="ts">
+import { formatCodeGenType } from '@/utils/codeGenTypes'
+
 interface Props {
   app: API.AppVO
   featured?: boolean
@@ -98,6 +104,23 @@ const handleViewWork = () => {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   letter-spacing: 2px;
+}
+
+/* 生成类型标签 — 左上角浮层 */
+.type-badge {
+  position: absolute;
+  top: var(--spacing-sm);
+  left: var(--spacing-sm);
+  padding: 2px var(--spacing-sm);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  background: rgba(15, 25, 35, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  z-index: 1;
+  letter-spacing: 0.3px;
 }
 
 .app-overlay {
