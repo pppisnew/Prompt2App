@@ -3,7 +3,7 @@
     <div class="app-preview">
       <img v-if="app.cover" :src="app.cover" :alt="app.appName" />
       <div v-else class="app-placeholder">
-        <span>🤖</span>
+        <span>AI</span>
       </div>
       <div class="app-overlay">
         <a-space>
@@ -56,26 +56,26 @@ const handleViewWork = () => {
 
 <style scoped>
 .app-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition:
-    transform 0.3s,
-    box-shadow 0.3s;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
   cursor: pointer;
 }
 
 .app-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--color-border-gold);
 }
 
 .app-preview {
   height: 180px;
-  background: #f5f5f5;
+  background: var(--color-bg-elevated);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -90,8 +90,14 @@ const handleViewWork = () => {
 }
 
 .app-placeholder {
-  font-size: 48px;
-  color: #d9d9d9;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
 }
 
 .app-overlay {
@@ -100,12 +106,13 @@ const handleViewWork = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(15, 25, 35, 0.7);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity var(--transition-normal);
 }
 
 .app-card:hover .app-overlay {
@@ -113,10 +120,10 @@ const handleViewWork = () => {
 }
 
 .app-info {
-  padding: 16px;
+  padding: var(--spacing-md);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 .app-info-left {
@@ -131,8 +138,8 @@ const handleViewWork = () => {
 .app-title {
   font-size: 16px;
   font-weight: 600;
-  margin: 0 0 4px;
-  color: #1a1a1a;
+  margin: 0 0 var(--spacing-xs);
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -140,7 +147,7 @@ const handleViewWork = () => {
 
 .app-author {
   font-size: 14px;
-  color: #666;
+  color: var(--color-text-secondary);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;

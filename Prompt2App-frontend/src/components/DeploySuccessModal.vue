@@ -2,7 +2,7 @@
   <a-modal v-model:open="visible" title="部署成功" :footer="null" width="600px">
     <div class="deploy-success">
       <div class="success-icon">
-        <CheckCircleOutlined style="color: #52c41a; font-size: 48px" />
+        <CheckCircleOutlined style="color: var(--color-accent-gold); font-size: 48px" />
       </div>
       <h3>网站部署成功！</h3>
       <p>你的网站已经成功部署，可以通过以下链接访问：</p>
@@ -68,31 +68,32 @@ const handleClose = () => {
 <style scoped>
 .deploy-success {
   text-align: center;
-  padding: 24px;
+  padding: var(--spacing-xl);
 }
 
 .success-icon {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-md);
 }
 
 .deploy-success h3 {
-  margin: 0 0 16px;
+  margin: 0 0 var(--spacing-md);
   font-size: 20px;
   font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 .deploy-success p {
-  margin: 0 0 24px;
-  color: #666;
+  margin: 0 0 var(--spacing-xl);
+  color: var(--color-text-secondary);
 }
 
 .deploy-url {
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-xl);
 }
 
 .deploy-actions {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-md);
   justify-content: center;
 }
 </style>

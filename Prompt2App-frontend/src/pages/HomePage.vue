@@ -282,37 +282,14 @@ onMounted(() => {
   padding: 0;
   min-height: 100vh;
   background:
-    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 8%, #e2e8f0 20%, #cbd5e1 100%),
-    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(74, 111, 165, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(123, 108, 176, 0.10) 0%, transparent 50%),
+    var(--color-bg);
   position: relative;
   overflow: hidden;
 }
 
-/* 科技感网格背景 */
-#homePage::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-    linear-gradient(rgba(139, 92, 246, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(139, 92, 246, 0.04) 1px, transparent 1px);
-  background-size:
-    100px 100px,
-    100px 100px,
-    20px 20px,
-    20px 20px;
-  pointer-events: none;
-  animation: gridFloat 20s ease-in-out infinite;
-}
-
-/* 动态光效 */
+/* 鼠标跟随柔光（降透明度，减少干扰） */
 #homePage::after {
   content: '';
   position: absolute;
@@ -320,124 +297,51 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background:
-    radial-gradient(
-      600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-      rgba(59, 130, 246, 0.08) 0%,
-      rgba(139, 92, 246, 0.06) 40%,
-      transparent 80%
-    ),
-    linear-gradient(45deg, transparent 30%, rgba(59, 130, 246, 0.04) 50%, transparent 70%),
-    linear-gradient(-45deg, transparent 30%, rgba(139, 92, 246, 0.04) 50%, transparent 70%);
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(74, 111, 165, 0.04) 0%,
+    transparent 80%
+  );
   pointer-events: none;
-  animation: lightPulse 8s ease-in-out infinite alternate;
-}
-
-@keyframes gridFloat {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(5px, 5px);
-  }
-}
-
-@keyframes lightPulse {
-  0% {
-    opacity: 0.3;
-  }
-  100% {
-    opacity: 0.7;
-  }
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: var(--spacing-lg);
   position: relative;
   z-index: 2;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* 移除居中光束效果 */
-
 /* 英雄区域 */
 .hero-section {
   text-align: center;
-  padding: 80px 0 60px;
-  margin-bottom: 28px;
-  color: #1e293b;
+  padding: var(--spacing-2xl) 0 var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
   position: relative;
-  overflow: hidden;
-}
-
-.hero-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background:
-    radial-gradient(ellipse 800px 400px at center, rgba(59, 130, 246, 0.12) 0%, transparent 70%),
-    linear-gradient(45deg, transparent 30%, rgba(139, 92, 246, 0.05) 50%, transparent 70%),
-    linear-gradient(-45deg, transparent 30%, rgba(16, 185, 129, 0.04) 50%, transparent 70%);
-  animation: heroGlow 10s ease-in-out infinite alternate;
-}
-
-@keyframes heroGlow {
-  0% {
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1.02);
-  }
-}
-
-@keyframes rotate {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
+  animation: fadeInUp 600ms ease-out forwards;
 }
 
 .hero-title {
   font-size: 56px;
   font-weight: 700;
-  margin: 0 0 20px;
+  margin: 0 0 var(--spacing-md);
   line-height: 1.2;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #10b981 100%);
+  background: var(--gradient-text);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   letter-spacing: -1px;
   position: relative;
   z-index: 2;
-  animation: titleShimmer 3s ease-in-out infinite;
-}
-
-@keyframes titleShimmer {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
 }
 
 .hero-description {
   font-size: 20px;
   margin: 0;
-  opacity: 0.8;
-  color: #64748b;
+  color: var(--color-text-secondary);
   position: relative;
   z-index: 2;
 }
@@ -445,24 +349,26 @@ onMounted(() => {
 /* 输入区域 */
 .input-section {
   position: relative;
-  margin: 0 auto 24px;
+  margin: 0 auto var(--spacing-lg);
   max-width: 800px;
 }
 
 .prompt-input {
-  border-radius: 16px;
-  border: none;
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid var(--color-border) !important;
   font-size: 16px;
-  padding: 20px 60px 20px 20px;
-  background: rgba(255, 255, 255, 0.95);
+  padding: 20px 60px 20px 20px !important;
+  background: var(--color-bg-glass) !important;
   backdrop-filter: blur(20px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-card);
+  color: var(--color-text-primary) !important;
+  transition: all var(--transition-normal);
 }
 
 .prompt-input:focus {
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
-  transform: translateY(-2px);
+  border-color: var(--color-primary) !important;
+  box-shadow: var(--shadow-glow), var(--shadow-card) !important;
 }
 
 .input-actions {
@@ -470,16 +376,16 @@ onMounted(() => {
   bottom: 12px;
   right: 12px;
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-sm);
   align-items: center;
 }
 
 /* 快捷按钮 */
 .quick-actions {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-md);
   justify-content: center;
-  margin-bottom: 60px;
+  margin-bottom: var(--spacing-2xl);
   flex-wrap: wrap;
 }
 
@@ -487,77 +393,54 @@ onMounted(() => {
   border-radius: 25px;
   padding: 8px 20px;
   height: auto;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  color: #475569;
-  backdrop-filter: blur(15px);
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-}
-
-.quick-actions .ant-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
-  transition: left 0.5s;
-}
-
-.quick-actions .ant-btn:hover::before {
-  left: 100%;
+  background: var(--color-bg-glass-light);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  backdrop-filter: blur(12px);
+  transition: all var(--transition-normal);
 }
 
 .quick-actions .ant-btn:hover {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(59, 130, 246, 0.4);
-  color: #3b82f6;
+  background: rgba(201, 169, 110, 0.08);
+  border-color: var(--color-border-gold);
+  color: var(--color-accent-gold);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+  box-shadow: var(--shadow-glow-gold);
 }
 
 /* 区域标题 */
 .section {
-  margin-bottom: 60px;
+  margin-bottom: var(--spacing-2xl);
 }
 
 .section-title {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 600;
-  margin-bottom: 32px;
-  color: #1e293b;
+  margin-bottom: var(--spacing-xl);
+  color: var(--color-text-primary);
+  letter-spacing: 0.5px;
 }
 
-/* 我的作品网格 */
-.app-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
-  margin-bottom: 32px;
-}
-
-/* 精选案例网格 */
+/* 网格 */
+.app-grid,
 .featured-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
-  margin-bottom: 32px;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
 }
 
 /* 分页 */
 .pagination-wrapper {
   display: flex;
   justify-content: center;
-  margin-top: 32px;
+  margin-top: var(--spacing-xl);
 }
 
-/* 响应式设计 */
+/* 响应式 */
 @media (max-width: 768px) {
   .hero-title {
-    font-size: 32px;
+    font-size: 28px;
   }
 
   .hero-description {
@@ -569,8 +452,8 @@ onMounted(() => {
     grid-template-columns: 1fr;
   }
 
-  .quick-actions {
-    justify-content: center;
+  .container {
+    padding: var(--spacing-md);
   }
 }
 </style>

@@ -789,11 +789,12 @@ onUnmounted(() => {
 
 <style scoped>
 #appChatPage {
-  height: 100vh;
+  /* 修复 height:100vh 叠加 header 导致溢出 */
+  height: calc(100vh - 64px);
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  background: #fdfdfd;
+  padding: var(--spacing-md);
+  background: var(--color-bg);
 }
 
 /* 顶部栏 */
@@ -801,13 +802,13 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: var(--spacing-md) var(--spacing-md);
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 .code-gen-type-tag {
@@ -818,75 +819,81 @@ onUnmounted(() => {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--color-text-primary);
 }
 
 .header-right {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 /* 主要内容区域 */
 .main-content {
   flex: 1;
   display: flex;
-  gap: 16px;
-  padding: 8px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm);
   overflow: hidden;
 }
 
-/* 左侧对话区域 */
+/* 左侧对话区域 — 毛玻璃面板 */
 .chat-section {
   flex: 2;
   display: flex;
   flex-direction: column;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
 .messages-container {
   flex: 0.9;
-  padding: 16px;
+  padding: var(--spacing-md);
   overflow-y: auto;
   scroll-behavior: smooth;
 }
 
 .message-item {
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-md);
+  animation: fadeInUp 300ms ease-out forwards;
 }
 
 .user-message {
   display: flex;
   justify-content: flex-end;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .ai-message {
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .message-content {
   max-width: 70%;
-  padding: 12px 16px;
-  border-radius: 12px;
+  padding: 12px var(--spacing-md);
+  border-radius: var(--radius-md);
   line-height: 1.5;
   word-wrap: break-word;
 }
 
 .user-message .message-content {
-  background: #1890ff;
-  color: white;
+  background: rgba(74, 111, 165, 0.3);
+  border: 1px solid rgba(74, 111, 165, 0.2);
+  color: var(--color-text-primary);
 }
 
 .ai-message .message-content {
-  background: #f5f5f5;
-  color: #1a1a1a;
+  background: var(--color-bg-glass-light);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
   padding: 8px 12px;
 }
 
@@ -897,21 +904,22 @@ onUnmounted(() => {
 .loading-indicator {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #666;
+  gap: var(--spacing-sm);
+  color: var(--color-text-secondary);
 }
 
 /* 加载更多按钮 */
 .load-more-container {
   text-align: center;
-  padding: 8px 0;
-  margin-bottom: 16px;
+  padding: var(--spacing-sm) 0;
+  margin-bottom: var(--spacing-md);
 }
 
 /* 输入区域 */
 .input-container {
-  padding: 16px;
-  background: white;
+  padding: var(--spacing-md);
+  background: var(--color-bg-glass-light);
+  border-top: 1px solid var(--color-border);
 }
 
 .input-wrapper {
@@ -920,22 +928,34 @@ onUnmounted(() => {
 
 .input-wrapper .ant-input {
   padding-right: 50px;
+  background: var(--color-bg-glass-light) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text-primary) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.input-wrapper .ant-input:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: var(--shadow-glow) !important;
 }
 
 .input-actions {
   position: absolute;
-  bottom: 8px;
-  right: 8px;
+  bottom: var(--spacing-sm);
+  right: var(--spacing-sm);
 }
 
-/* 右侧预览区域 */
+/* 右侧预览区域 — 毛玻璃面板 */
 .preview-section {
   flex: 3;
   display: flex;
   flex-direction: column;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
@@ -943,19 +963,21 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid #e8e8e8;
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-glass-light);
 }
 
 .preview-header h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 .preview-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .preview-content {
@@ -970,12 +992,12 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #666;
+  color: var(--color-text-muted);
 }
 
 .placeholder-icon {
   font-size: 48px;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-md);
 }
 
 .preview-loading {
@@ -984,11 +1006,11 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #666;
+  color: var(--color-text-muted);
 }
 
 .preview-loading p {
-  margin-top: 16px;
+  margin-top: var(--spacing-md);
 }
 
 .preview-iframe {
@@ -998,10 +1020,71 @@ onUnmounted(() => {
 }
 
 .selected-element-alert {
-  margin: 0 16px;
+  margin: 0 var(--spacing-md);
 }
 
-/* 响应式设计 */
+/* 元素信息样式（所有尺寸通用） */
+.selected-element-info {
+  line-height: 1.4;
+}
+
+.element-header {
+  margin-bottom: var(--spacing-sm);
+}
+
+.element-details {
+  margin-top: var(--spacing-sm);
+}
+
+.element-item {
+  margin-bottom: var(--spacing-xs);
+  font-size: 13px;
+}
+
+.element-item:last-child {
+  margin-bottom: 0;
+}
+
+.element-tag {
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-accent-cyan);
+}
+
+.element-id {
+  color: var(--color-accent-gold);
+  margin-left: var(--spacing-xs);
+}
+
+.element-class {
+  color: var(--color-secondary);
+  margin-left: var(--spacing-xs);
+}
+
+.element-selector-code {
+  font-family: 'Monaco', 'Menlo', monospace;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--color-accent-cyan);
+  border: 1px solid var(--color-border);
+}
+
+/* 编辑模式按钮 — 金色 */
+.edit-mode-active {
+  background-color: var(--color-accent-gold) !important;
+  border-color: var(--color-accent-gold) !important;
+  color: var(--color-bg) !important;
+}
+
+.edit-mode-active:hover {
+  background-color: #d4b87e !important;
+  border-color: #d4b87e !important;
+}
+
+/* 响应式 */
 @media (max-width: 1024px) {
   .main-content {
     flex-direction: column;
@@ -1016,7 +1099,7 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .header-bar {
-    padding: 12px 16px;
+    padding: var(--spacing-md);
   }
 
   .app-name {
@@ -1024,77 +1107,12 @@ onUnmounted(() => {
   }
 
   .main-content {
-    padding: 8px;
-    gap: 8px;
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
   }
 
   .message-content {
     max-width: 85%;
-  }
-
-  /* 选中元素信息样式 */
-  .selected-element-alert {
-    margin: 0 16px;
-  }
-
-  .selected-element-info {
-    line-height: 1.4;
-  }
-
-  .element-header {
-    margin-bottom: 8px;
-  }
-
-  .element-details {
-    margin-top: 8px;
-  }
-
-  .element-item {
-    margin-bottom: 4px;
-    font-size: 13px;
-  }
-
-  .element-item:last-child {
-    margin-bottom: 0;
-  }
-
-  .element-tag {
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 14px;
-    font-weight: 600;
-    color: #007bff;
-  }
-
-  .element-id {
-    color: #28a745;
-    margin-left: 4px;
-  }
-
-  .element-class {
-    color: #ffc107;
-    margin-left: 4px;
-  }
-
-  .element-selector-code {
-    font-family: 'Monaco', 'Menlo', monospace;
-    background: #f6f8fa;
-    padding: 2px 4px;
-    border-radius: 3px;
-    font-size: 12px;
-    color: #d73a49;
-    border: 1px solid #e1e4e8;
-  }
-
-  /* 编辑模式按钮样式 */
-  .edit-mode-active {
-    background-color: #52c41a !important;
-    border-color: #52c41a !important;
-    color: white !important;
-  }
-
-  .edit-mode-active:hover {
-    background-color: #73d13d !important;
-    border-color: #73d13d !important;
   }
 }
 </style>

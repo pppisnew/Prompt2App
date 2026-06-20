@@ -7,8 +7,8 @@ import { computed } from 'vue'
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
 
-// 引入代码高亮样式
-import 'highlight.js/styles/github.css'
+// 引入代码高亮样式（深色主题）
+import 'highlight.js/styles/github-dark.css'
 
 interface Props {
   content: string
@@ -47,7 +47,7 @@ const renderedMarkdown = computed(() => {
 <style scoped>
 .markdown-content {
   line-height: 1.6;
-  color: #333;
+  color: var(--color-text-primary);
   word-wrap: break-word;
 }
 
@@ -61,17 +61,18 @@ const renderedMarkdown = computed(() => {
   margin: 1.5em 0 0.5em 0;
   font-weight: 600;
   line-height: 1.25;
+  color: var(--color-text-primary);
 }
 
 .markdown-content :deep(h1) {
   font-size: 1.5em;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-border);
   padding-bottom: 0.3em;
 }
 
 .markdown-content :deep(h2) {
   font-size: 1.3em;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-border);
   padding-bottom: 0.3em;
 }
 
@@ -96,23 +97,25 @@ const renderedMarkdown = computed(() => {
 .markdown-content :deep(blockquote) {
   margin: 1em 0;
   padding: 0.5em 1em;
-  border-left: 4px solid #ddd;
-  background-color: #f9f9f9;
-  color: #666;
+  border-left: 4px solid var(--color-primary);
+  background-color: var(--color-bg-glass-light);
+  color: var(--color-text-secondary);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
 .markdown-content :deep(code) {
-  background-color: #f1f1f1;
+  background-color: rgba(0, 0, 0, 0.3);
   padding: 0.2em 0.4em;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9em;
+  color: var(--color-accent-cyan);
 }
 
 .markdown-content :deep(pre) {
-  background-color: #f8f8f8;
-  border: 1px solid #e1e1e1;
-  border-radius: 6px;
+  background-color: #0d1117 !important;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   padding: 1em;
   overflow-x: auto;
   margin: 1em 0;
@@ -124,6 +127,7 @@ const renderedMarkdown = computed(() => {
   border-radius: 0;
   font-size: 0.9em;
   line-height: 1.4;
+  color: inherit;
 }
 
 .markdown-content :deep(table) {
@@ -134,84 +138,50 @@ const renderedMarkdown = computed(() => {
 
 .markdown-content :deep(table th),
 .markdown-content :deep(table td) {
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   padding: 0.5em 0.8em;
   text-align: left;
 }
 
 .markdown-content :deep(table th) {
-  background-color: #f5f5f5;
+  background-color: var(--color-bg-glass-light);
   font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 .markdown-content :deep(table tr:nth-child(even)) {
-  background-color: #f9f9f9;
+  background-color: var(--color-bg-glass-light);
 }
 
 .markdown-content :deep(a) {
-  color: #1890ff;
+  color: var(--color-accent-cyan);
   text-decoration: none;
 }
 
 .markdown-content :deep(a:hover) {
   text-decoration: underline;
+  color: var(--color-primary-light);
 }
 
 .markdown-content :deep(img) {
   max-width: 100%;
   height: auto;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   margin: 0.5em 0;
 }
 
 .markdown-content :deep(hr) {
   border: none;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--color-border);
   margin: 1.5em 0;
 }
 
-/* 代码高亮样式优化 */
+/* 代码高亮 — github-dark 主题覆盖 */
 .markdown-content :deep(.hljs) {
-  background-color: #f8f8f8 !important;
-  border-radius: 6px;
+  background-color: #0d1117 !important;
+  border-radius: var(--radius-sm);
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9em;
   line-height: 1.4;
-}
-
-/* 特定语言的代码块样式 */
-.markdown-content :deep(.hljs-keyword) {
-  color: #d73a49;
-  font-weight: 600;
-}
-
-.markdown-content :deep(.hljs-string) {
-  color: #032f62;
-}
-
-.markdown-content :deep(.hljs-comment) {
-  color: #6a737d;
-  font-style: italic;
-}
-
-.markdown-content :deep(.hljs-number) {
-  color: #005cc5;
-}
-
-.markdown-content :deep(.hljs-function) {
-  color: #6f42c1;
-}
-
-.markdown-content :deep(.hljs-tag) {
-  color: #22863a;
-}
-
-.markdown-content :deep(.hljs-attr) {
-  color: #6f42c1;
-}
-
-.markdown-content :deep(.hljs-title) {
-  color: #6f42c1;
-  font-weight: 600;
 }
 </style>

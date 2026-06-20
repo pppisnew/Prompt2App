@@ -85,27 +85,73 @@ const handleSubmit = async (values: API.UserRegisterRequest) => {
 
 <style scoped>
 #userRegisterPage {
-  background: white;
-  max-width: 720px;
-  padding: 24px;
-  margin: 24px auto;
+  min-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background:
+    radial-gradient(circle at 30% 70%, rgba(74, 111, 165, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 70% 30%, rgba(123, 108, 176, 0.10) 0%, transparent 50%),
+    var(--color-bg);
+  padding: var(--spacing-xl);
+}
+
+#userRegisterPage > .title,
+#userRegisterPage > .desc,
+#userRegisterPage > a-form,
+#userRegisterPage > form {
+  width: 100%;
+  max-width: 420px;
+}
+
+:deep(.ant-form) {
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-card);
+  width: 100%;
+  max-width: 420px;
 }
 
 .title {
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-primary);
+  font-size: 24px;
+  font-weight: 600;
+  max-width: 420px;
+  width: 100%;
 }
 
 .desc {
   text-align: center;
-  color: #bbb;
-  margin-bottom: 16px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-xl);
+  max-width: 420px;
+  width: 100%;
 }
 
 .tips {
-  margin-bottom: 16px;
-  color: #bbb;
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-muted);
   font-size: 13px;
   text-align: right;
+}
+
+:deep(.ant-input),
+:deep(.ant-input-password) {
+  background: var(--color-bg-glass-light) !important;
+  border-color: var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+:deep(.ant-input:focus),
+:deep(.ant-input-focused) {
+  border-color: var(--color-primary) !important;
+  box-shadow: var(--shadow-glow) !important;
 }
 </style>
