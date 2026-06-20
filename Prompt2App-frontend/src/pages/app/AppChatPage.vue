@@ -499,6 +499,21 @@ const generateCode = async (userMessage: string, aiMessageIndex: number) => {
 
     let fullContent = ''
 
+    // 节流渲染：LLM 流式 chunk 频率可达几十 Hz，每个 chunk 都触发 Vue 响应式更新 + scrollToBottom
+    // 会阻塞主线程导致"流式停顿 + 页面不能操作"。用 rAF 合并到每帧最多一次更新（~60Hz 上限，
+    // 实际因主线程繁忙会自然降频），保留"打字机"效果同时释放主线程响应用户操作。
+    let pendingRender = false
+    const scheduleRender = () => {
+      if (pendingRender) return
+      pendingRender = true
+      requestAnimationFrame(() => {
+        pendingRender = false
+        messages.value[aiMessageIndex].content = fullContent
+        messages.value[aiMessageIndex].loading = false
+        scrollToBottom()
+      })
+    }
+
     // 处理接收到的消息
     eventSource.onmessage = function (event) {
       if (streamCompleted) return
@@ -511,9 +526,7 @@ const generateCode = async (userMessage: string, aiMessageIndex: number) => {
         // 拼接内容
         if (content !== undefined && content !== null) {
           fullContent += content
-          messages.value[aiMessageIndex].content = fullContent
-          messages.value[aiMessageIndex].loading = false
-          scrollToBottom()
+          scheduleRender()
         }
       } catch (error) {
         console.error('解析消息失败:', error)
@@ -528,6 +541,11 @@ const generateCode = async (userMessage: string, aiMessageIndex: number) => {
       streamCompleted = true
       isGenerating.value = false
       eventSource?.close()
+
+      // 确保 rAF 节流缓存的最后一次内容被 flush（避免最后一帧丢失）
+      messages.value[aiMessageIndex].content = fullContent
+      messages.value[aiMessageIndex].loading = false
+      scrollToBottom()
 
       // 延迟更新预览，确保后端已完成处理
       setTimeout(async () => {
