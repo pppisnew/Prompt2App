@@ -6,6 +6,8 @@ import com.prompt2app.infra.exception.BusinessException;
 import com.prompt2app.infra.exception.ErrorCode;
 import com.prompt2app.app.model.enums.CodeGenTypeEnum;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,19 +35,12 @@ public class MultiFileCodeFileSaverTemplate extends CodeFileSaverTemplate<MultiF
     @Override
     protected void saveFiles(MultiFileCodeResult result, String baseDirPath) {
         String htmlCode = result.getHtmlCode();
-        // 拆分多个 HTML 页面
-        String[] htmlPages = htmlCode.split(FILE_SEPARATOR);
-        if (htmlPages.length > 1) {
-            // 多页站：按 <title> 内容生成文件名
-            for (int i = 0; i < htmlPages.length; i++) {
-                String page = htmlPages[i].trim();
-                if (page.isEmpty()) continue;
-                String fileName = resolveHtmlFileName(page, i);
-                writeToFile(baseDirPath, fileName, page);
-            }
-        } else {
-            // 单页：保存为 index.html
-            writeToFile(baseDirPath, "index.html", htmlCode);
+        // 直接按 <!DOCTYPE + <!-- filename.html --> 拆分多页 HTML
+        // （LangChain4j @StructuredOutput 不经过 parser，htmlCode 可能含多个 DOCTYPE）
+        List<PageEntry> pages = splitHtmlPages(htmlCode);
+        for (int i = 0; i < pages.size(); i++) {
+            PageEntry page = pages.get(i);
+            writeToFile(baseDirPath, page.fileName, page.content);
         }
         // 保存 CSS 文件
         writeToFile(baseDirPath, "style.css", result.getCssCode());
@@ -53,8 +48,55 @@ public class MultiFileCodeFileSaverTemplate extends CodeFileSaverTemplate<MultiF
         writeToFile(baseDirPath, "script.js", result.getJsCode());
     }
 
+    /** 按页拆分 HTML（支持 <!-- filename.html --> + <!DOCTYPE 双重信号）。 */
+    private List<PageEntry> splitHtmlPages(String htmlCode) {
+        if (htmlCode == null || htmlCode.trim().isEmpty()) {
+            return List.of();
+        }
+        // 先按 FILE_SEPARATOR 拆（parser 注入的，如果走了 parser 路径）
+        if (htmlCode.contains(FILE_SEPARATOR)) {
+            String[] parts = htmlCode.split(FILE_SEPARATOR);
+            List<PageEntry> pages = new ArrayList<>();
+            for (int i = 0; i < parts.length; i++) {
+                String page = parts[i].trim();
+                if (!page.isEmpty()) {
+                    pages.add(new PageEntry(resolveHtmlFileName(page, i), page));
+                }
+            }
+            return pages;
+        }
+        // Fallback：按 <!DOCTYPE 拆分（LangChain4j structured output 路径）
+        String[] doctypeParts = PAGE_SPLIT_PATTERN.split(htmlCode);
+        List<PageEntry> pages = new ArrayList<>();
+        for (int i = 0; i < doctypeParts.length; i++) {
+            String page = doctypeParts[i].trim();
+            if (!page.isEmpty()) {
+                pages.add(new PageEntry(resolveHtmlFileName(page, i), page));
+            }
+        }
+        return pages;
+    }
+
+    /** 页面条目：文件名 + 内容。 */
+    private record PageEntry(String fileName, String content) {}
+
+    /** 文件名注释模式：<!-- index.html --> 或 <!-- about.html --> */
+    private static final Pattern FILE_NAME_COMMENT_PATTERN = Pattern.compile(
+            "^\\s*<!--\\s*([\\w.-]+\\.html)\\s*-->");
+
+    /** 按 <!DOCTYPE html> 拆分多页（lookahead，保留分隔符在结果里） */
+    private static final Pattern PAGE_SPLIT_PATTERN = Pattern.compile(
+            "(?=(?:<!--\\s*[\\w.-]+\\.html\\s*-->\\s*)?<!DOCTYPE\\s*html>)",
+            Pattern.CASE_INSENSITIVE);
+
     /** 从 <title> 标签提取文件名，提取失败则用 page_0.html / page_1.html ... */
     private String resolveHtmlFileName(String htmlContent, int index) {
+        // 优先：检查开头的 <!-- filename.html --> 注释（LLM 常加）
+        Matcher commentMatcher = FILE_NAME_COMMENT_PATTERN.matcher(htmlContent);
+        if (commentMatcher.find()) {
+            return commentMatcher.group(1).toLowerCase();
+        }
+        // 其次：从 <title> 标签提取
         Matcher m = TITLE_TAG_PATTERN.matcher(htmlContent);
         if (m.find()) {
             String title = m.group(1).trim()
