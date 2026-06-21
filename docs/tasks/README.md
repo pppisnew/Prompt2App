@@ -38,3 +38,4 @@ YYYY-MM-DD-<phase>-<slug>.md
 | 2026-06-20 | Phase 8（增量 #3） | [事故链 #6–#10：静态资源双目录 + 前端 URL 统一 + metric 列名 + COS 诊断（ADR-0012）](./2026-06-20-phase8-incident-chain-6-to-10.md) | 项目作者 + AI | ✅ 完成 |
 | 2026-06-20 | 前端 | [去品牌化 + GlobalHeader/Footer 组件重构（ADR-0009 延伸）](./2026-06-20-frontend-rebrand-and-component-refactor.md) | 项目作者 + AI | ✅ 完成 |
 | 2026-06-20 | 前端 | [UI/UX 系统性升级 — 崩铁设计语言 × 专业 AI 产品](./2026-06-20-frontend-ui-ux-redesign.md) | 项目作者 + AI | ✅ 完成 |
+| 2026-06-21 | Eval | [MULTI_FILE + VUE_PROJECT 0 分修复 + 三轮评测 19.75→55.06](./2026-06-21-multi-file-vue-eval-fix.md) | 项目作者 + AI | ✅ 完成 |
