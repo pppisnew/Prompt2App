@@ -6,8 +6,8 @@
 # 字段说明见下方注释。所有字段都用客观事实描述，避免"很好/很差"等主观词。
 # ---------------------------------------------------------------------------
 
-$schema: "https://json-schema.org/draft/2020-12/schema"
-$id: "yu-ai-code-mother/eval/case.schema.yaml"
+$schema: "https://json-schema.org/draft/2026-6/schema"
+$id: "Prompt2App/eval/case.schema.yaml"
 title: "Evaluation Case"
 type: object
 required:
