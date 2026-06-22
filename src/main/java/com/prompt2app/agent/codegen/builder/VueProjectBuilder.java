@@ -1,10 +1,14 @@
 package com.prompt2app.agent.codegen.builder;
 
-import cn.hutool.core.util.RuntimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -112,38 +116,90 @@ public class VueProjectBuilder {
     /**
      * 执行命令
      *
+     * <p>用 {@link ProcessBuilder} 替代 {@code RuntimeUtil.exec}，关键改进（根因 B）：
+     * <ul>
+     *   <li>{@code redirectErrorStream(true)} 合并 stderr→stdout，避免进程 buffer 满死锁；</li>
+     *   <li>独立线程读取输出，失败时 log stdout/stderr tail（不再是裸 exitCode）；</li>
+     *   <li>命令找不到时（exitCode=127 或 IOException）追加 PATH 诊断，提示 npm 可能不在 PATH。</li>
+     * </ul>
+     *
      * @param workingDir     工作目录
-     * @param command        命令字符串
+     * @param command        命令字符串（空格分割，不处理引号——已知遗留，非本 task scope）
      * @param timeoutSeconds 超时时间（秒）
      * @return 是否执行成功
      */
     private boolean executeCommand(File workingDir, String command, int timeoutSeconds) {
+        log.info("在目录 {} 中执行命令: {}", workingDir.getAbsolutePath(), command);
+        // redirectErrorStream：合并 stderr 到 stdout，单流读取防 buffer 满死锁
+        ProcessBuilder pb = new ProcessBuilder(command.split("\\s+"))
+                .directory(workingDir)
+                .redirectErrorStream(true);
+        Process process;
         try {
-            log.info("在目录 {} 中执行命令: {}", workingDir.getAbsolutePath(), command);
-            Process process = RuntimeUtil.exec(
-                    null,
-                    workingDir,
-                    command.split("\\s+") // 命令分割为数组
-            );
-            // 等待进程完成，设置超时
+            process = pb.start();
+        } catch (java.io.IOException e) {
+            // 典型：npm 不在 PATH → "Cannot run program \"npm\""
+            log.error("命令启动失败: {} | 错误: {} | 当前 PATH={} | 提示：若 npm 通过 nvm 安装，"
+                            + "请确认启动 SpringBoot 的环境 PATH 含 node/npm 所在目录",
+                    command, e.getMessage(), System.getenv("PATH"));
+            return false;
+        }
+
+        // 独立线程读取合并输出，避免输出 buffer 满导致 waitFor 死锁
+        StringBuilder outputBuf = new StringBuilder();
+        Thread reader = Thread.ofVirtual().name("vue-build-stdout").start(() -> {
+            try (InputStream is = process.getInputStream();
+                 BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    outputBuf.append(line).append('\n');
+                }
+            } catch (Exception ignored) {
+                // 读流出错不影响主流程判定，跳过
+            }
+        });
+
+        try {
             boolean finished = process.waitFor(timeoutSeconds, TimeUnit.SECONDS);
             if (!finished) {
-                log.error("命令执行超时（{}秒），强制终止进程", timeoutSeconds);
+                log.error("命令执行超时（{}秒），强制终止进程: {}", timeoutSeconds, command);
                 process.destroyForcibly();
+                reader.interrupt();
                 return false;
             }
+            reader.join(2000); // 等输出读完
             int exitCode = process.exitValue();
             if (exitCode == 0) {
                 log.info("命令执行成功: {}", command);
                 return true;
-            } else {
-                log.error("命令执行失败，退出码: {}", exitCode);
-                return false;
             }
-        } catch (Exception e) {
-            log.error("执行命令失败: {}, 错误信息: {}", command, e.getMessage());
+            // 失败：log exitCode + 输出 tail（最多 30 行），便于定位 npm/rollup 真实错误
+            String tail = tailLines(outputBuf.toString(), 30);
+            if (exitCode == 127) {
+                log.error("命令执行失败，退出码 {}（命令未找到）: {} | 输出 tail:\n{} | 当前 PATH={}",
+                        exitCode, command, tail, System.getenv("PATH"));
+            } else {
+                log.error("命令执行失败，退出码 {}: {} | 输出 tail:\n{}", exitCode, command, tail);
+            }
+            return false;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("命令执行被中断: {}", command);
+            process.destroyForcibly();
             return false;
         }
+    }
+
+    /** 取输出末尾最多 n 行，超出以省略号提示。 */
+    private String tailLines(String output, int maxLines) {
+        if (output == null || output.isEmpty()) return "(no output)";
+        String[] lines = output.split("\n");
+        if (lines.length <= maxLines) return output.trim();
+        int from = lines.length - maxLines;
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format(Locale.ROOT, "(... %d lines omitted ...)\n", from));
+        for (int i = from; i < lines.length; i++) sb.append(lines[i]).append('\n');
+        return sb.toString().trim();
     }
 
 }

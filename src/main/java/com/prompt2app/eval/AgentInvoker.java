@@ -22,6 +22,20 @@ public interface AgentInvoker {
     /** Invoke the agent for one case. Always returns; never throws. */
     InvocationResult invoke(EvalCase evalCase);
 
+    /**
+     * Multi-round variant: invoke with a round identifier so the invoker can isolate artifacts
+     * across rounds (e.g. write to {@code tmp/code_output/round-N/...}). ADR-0013.
+     *
+     * <p>Default delegates to {@link #invoke(EvalCase)} — existing single-round callers
+     * (and the {@link Stub}) need no changes. Implementations that care about round isolation
+     * (e.g. {@code DirectServiceInvoker}) override this to honour {@code roundId}.
+     *
+     * @param roundId 1-based round number, or {@code null} for single-round legacy behaviour
+     */
+    default InvocationResult invoke(EvalCase evalCase, Integer roundId) {
+        return invoke(evalCase);
+    }
+
     @Value
     @Builder
     class InvocationResult {
@@ -33,6 +47,17 @@ public interface AgentInvoker {
         long durationMs;
         /** {@code true} iff the invocation completed without exception. Stub returns {@code false}. */
         boolean invoked;
+        /**
+         * {@code true} iff the generated artifact was successfully built into a renderable
+         * output (e.g. VUE_PROJECT produced {@code dist/index.html}). For strategies without
+         * a build step (HTML / MULTI_FILE) this stays {@code false} and is ignored by the
+         * Render scorer (those branches key off {@link #mergedOutput}).
+         *
+         * <p>Render scorer (ADR-0005) reads this for VUE_PROJECT to decide veto, instead of
+         * text-matching "package.json" inside {@code mergedOutput} (which fails when dist
+         * contents — compiled JS — are merged back).
+         */
+        boolean buildSuccess;
         /** Free-text note — stub uses this to mark "not yet implemented". */
         String note;
     }

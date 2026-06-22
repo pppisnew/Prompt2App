@@ -53,6 +53,81 @@ public class MarkdownReporter {
         write(output, sb.toString());
     }
 
+    // ---------- Multi-round aggregated report (ADR-0013) ----------
+
+    /**
+     * 多轮聚合报表：含每 case × N 轮分数矩阵 + 均分 ± 标准差 + 策略子均分。
+     * ADR-0013 引入，搭配 {@link MultiRoundEvalRunner}。
+     */
+    public void writeMultiRound(RoundAggregator.RoundedReport report,
+                                AgentInvoker invoker,
+                                Path output) {
+        StringBuilder sb = new StringBuilder(16 * 1024);
+        int n = report.getNumRounds();
+        sb.append("# Eval Baseline (").append(n).append(" rounds, temperature=0)\n\n");
+        sb.append("- **Generated**: ").append(LocalDateTime.now().format(ISO)).append("\n");
+        sb.append("- **Invoker**: `").append(invoker.name()).append("`\n");
+        sb.append("- **Rounds**: ").append(n).append("\n");
+        sb.append("- **Cases**: ").append(report.getCases().size()).append("\n");
+        sb.append("- **Total mean**: ").append(fmt2(report.getTotalMean()))
+                .append(" ± ").append(fmt2(report.getTotalStdev())).append(" / 100\n");
+        sb.append("- **Vetoed (last round)**: ").append(report.getVetoCount()).append("\n\n");
+
+        appendPerRoundTotals(sb, report);
+        appendPerStrategyMeans(sb, report);
+        appendPerCaseMultiRound(sb, report);
+
+        write(output, sb.toString());
+    }
+
+    private void appendPerRoundTotals(StringBuilder sb, RoundAggregator.RoundedReport report) {
+        sb.append("## Per-round total scores\n\n");
+        sb.append("| Round | Total mean |\n| --- | --- |\n");
+        double[] totals = report.getRoundTotalScores();
+        for (int i = 0; i < totals.length; i++) {
+            sb.append("| R").append(i + 1).append(" | ").append(fmt2(totals[i])).append(" |\n");
+        }
+        sb.append("\n");
+    }
+
+    private void appendPerStrategyMeans(StringBuilder sb, RoundAggregator.RoundedReport report) {
+        sb.append("## Per-strategy means\n\n");
+        sb.append("| Strategy | Mean | Stdev |\n| --- | --- | --- |\n");
+        for (Map.Entry<String, double[]> e : report.getStrategyMeans().entrySet()) {
+            sb.append("| ").append(e.getKey())
+                    .append(" | ").append(fmt2(e.getValue()[0]))
+                    .append(" | ").append(fmt2(e.getValue()[1])).append(" |\n");
+        }
+        sb.append("\n");
+    }
+
+    private void appendPerCaseMultiRound(StringBuilder sb, RoundAggregator.RoundedReport report) {
+        int n = report.getNumRounds();
+        sb.append("## Per-case scores\n\n");
+        sb.append("| Case | Strategy");
+        for (int i = 1; i <= n; i++) sb.append(" | R").append(i);
+        sb.append(" | Mean | Stdev |\n");
+        sb.append("| --- | ---");
+        for (int i = 1; i <= n; i++) sb.append(" | ---");
+        sb.append(" | --- | --- |\n");
+        for (RoundAggregator.AggregatedCaseScore c : report.getCases()) {
+            sb.append("| ").append(c.getCaseId()).append(" | ").append(c.getStrategy());
+            for (double s : c.getScores()) sb.append(" | ").append(fmt1(s));
+            sb.append(" | ").append(fmt2(c.getMean()));
+            sb.append(" | ").append(fmt2(c.getStdev()));
+            sb.append(" |\n");
+        }
+        sb.append("\n");
+    }
+
+    private static String fmt1(double v) {
+        return String.format(Locale.ROOT, "%.1f", v);
+    }
+
+    private static String fmt2(double v) {
+        return String.format(Locale.ROOT, "%.2f", v);
+    }
+
     // ---------- helpers ----------
 
     private void appendHeader(StringBuilder sb, List<CaseRun> runs, AgentInvoker invoker) {

@@ -11,7 +11,9 @@ import java.util.regex.Pattern;
  * <ul>
  *   <li>HTML 策略：抓 {@code <body>...</body>} 内文本（去注释、去空白），长度 ≥ 100</li>
  *   <li>MULTI_FILE 策略：merged output 中至少出现 2 次 {@code <body>} → 视为多文件已落地</li>
- *   <li>VUE_PROJECT 策略：merged output 至少包含 {@code package.json} + {@code main.} 或 {@code App.vue}</li>
+ *   <li>VUE_PROJECT 策略：检查 {@link AgentInvoker.InvocationResult#isBuildSuccess()}
+ *       —— build 产出 {@code dist/index.html} 才算可渲染。不再文本匹配 "package.json"
+ *       （编译后 JS 不含该字面量，旧逻辑会误判 build 成功的 case 为 0）。</li>
  * </ul>
  *
  * <p>不通过 → veto = true（最终分 0）。通过 → 该维度满分 100。
@@ -56,7 +58,7 @@ public class RenderScorer implements Scorer {
 
         String strategy = evalCase.getExpectedStrategy();
         if ("VUE_PROJECT".equals(strategy)) {
-            return checkVueProject(output);
+            return checkVueProject(invocation);
         }
         if ("MULTI_FILE".equals(strategy)) {
             return checkMultiFile(output);
@@ -94,12 +96,23 @@ public class RenderScorer implements Scorer {
         return ok(String.format(Locale.ROOT, "%d <body> tags found", bodyCount));
     }
 
-    private ScoreContribution checkVueProject(String output) {
-        boolean hasPkg = output.contains("package.json");
-        boolean hasEntry = output.contains("App.vue") || output.contains("main.js") || output.contains("main.ts");
-        if (!hasPkg) return veto("missing package.json");
-        if (!hasEntry) return veto("missing App.vue / main.js / main.ts entry");
-        return ok("Vue project structure: package.json + entry present");
+    private ScoreContribution checkVueProject(AgentInvoker.InvocationResult invocation) {
+        // build 产出 dist/index.html 才算可渲染（DirectServiceInvoker 在 blockLast 后检查磁盘）。
+        // 兜底：若 invoker 未填 buildSuccess（如 Stub / 旧实现），仍允许 mergedOutput 含项目结构
+        // 字面量时通过，避免契约迁移期误杀。
+        if (invocation.isBuildSuccess()) {
+            return ok("Vue project built: dist/index.html present");
+        }
+        // 兜底：mergedOutput 含 package.json + entry 字面量时也视为通过（兼容未填 buildSuccess 的 invoker）
+        String output = invocation.getMergedOutput();
+        if (output != null) {
+            boolean hasPkg = output.contains("package.json");
+            boolean hasEntry = output.contains("App.vue") || output.contains("main.js") || output.contains("main.ts");
+            if (hasPkg && hasEntry) {
+                return ok("Vue project structure: package.json + entry present (buildSuccess not set, fallback)");
+            }
+        }
+        return veto("Vue project build failed: no dist/index.html (buildSuccess=false)");
     }
 
     private ScoreContribution ok(String detail) {

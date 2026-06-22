@@ -36,6 +36,11 @@ public class Prompt2AppProperties {
     private Tool tool = new Tool();
 
     /**
+     * 评测运行模式配置（ADR-0013：多轮均分 + 断点续跑）。
+     */
+    private Eval eval = new Eval();
+
+    /**
      * 启动时打印关键配置（脱敏），便于排错确认环境是否正确加载。
      */
     @PostConstruct
@@ -46,6 +51,8 @@ public class Prompt2AppProperties {
         log.info("[Prompt2AppProperties] storage.codeDeployHost={}", storage.getCodeDeployHost());
         log.info("[Prompt2AppProperties] tool.maxPerSession={}, tool.maxPerFile={}",
                 tool.getMaxPerSession(), tool.getMaxPerFile());
+        log.info("[Prompt2AppProperties] eval.rounds={}, eval.resumeOnRestart={}",
+                eval.getRounds(), eval.isResumeOnRestart());
     }
 
     @Data
@@ -94,5 +101,22 @@ public class Prompt2AppProperties {
         private int maxPerSession = 50;
         /** 单文件最大工具调用次数（ADR-0008） */
         private int maxPerFile = 10;
+    }
+
+    /**
+     * 评测运行模式配置（ADR-0013）。
+     * <p>仅评测路径使用——多轮均分抑制 LLM 抽样波动，断点续跑容忍单轮失败。
+     * 生产路径（业务代码生成）不读这些配置。
+     */
+    @Data
+    public static class Eval {
+        /** 评测跑几轮（多轮取均分 + 标准差，ADR-0013 决策为 3） */
+        private int rounds = 3;
+        /** 每轮中间报告输出目录（相对工作目录） */
+        private String roundReportsDir = "eval/reports/runs";
+        /** 评测产物根目录占位（实际拼接由 storage.codeOutputDir + round-N 完成） */
+        private String outputBaseDir = "tmp/code_output";
+        /** 断点续跑：若 round-N 中间报告已存在则跳过该轮，从中间报告 load 结果聚合 */
+        private boolean resumeOnRestart = true;
     }
 }

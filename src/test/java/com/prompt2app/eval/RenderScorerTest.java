@@ -83,6 +83,7 @@ class RenderScorerTest {
 
     @Test
     void vue_with_package_and_app_passes() {
+        // 兜底路径：invoker 未设 buildSuccess，mergedOutput 含 package.json + entry 字面量
         EvalCase c = vueCase();
         String merged = "// package.json: { \"name\": \"app\" }\n// App.vue: <template><div>x</div></template>";
         Scorer.ScoreContribution r = scorer.evaluate(c, invocation(merged, 4));
@@ -90,12 +91,37 @@ class RenderScorerTest {
     }
 
     @Test
+    void vue_build_success_passes() {
+        // 主路径：buildSuccess=true（dist/index.html 已产出）→ 通过，与 mergedOutput 内容无关
+        EvalCase c = vueCase();
+        AgentInvoker.InvocationResult inv = AgentInvoker.InvocationResult.builder()
+                .mergedOutput("compiled js without any package.json literal")
+                .fileCount(3).durationMs(100L).invoked(true).buildSuccess(true).build();
+        Scorer.ScoreContribution r = scorer.evaluate(c, inv);
+        assertFalse(r.isVeto(), r.getDetail());
+        assertEquals(100.0, r.getScore());
+    }
+
+    @Test
+    void vue_build_failed_vetoes() {
+        // build 失败（无 dist）且 mergedOutput 不含结构字面量 → veto
+        EvalCase c = vueCase();
+        AgentInvoker.InvocationResult inv = AgentInvoker.InvocationResult.builder()
+                .mergedOutput("partial source without package.json literal")
+                .fileCount(1).durationMs(100L).invoked(true).buildSuccess(false).build();
+        Scorer.ScoreContribution r = scorer.evaluate(c, inv);
+        assertTrue(r.isVeto());
+        assertTrue(r.getDetail().contains("build failed"));
+    }
+
+    @Test
     void vue_without_package_vetoes() {
+        // 兜底路径：invoker 未设 buildSuccess，mergedOutput 缺 package.json → fallback 不命中 → veto
         EvalCase c = vueCase();
         String merged = "// just App.vue";
         Scorer.ScoreContribution r = scorer.evaluate(c, invocation(merged, 1));
         assertTrue(r.isVeto());
-        assertTrue(r.getDetail().contains("package.json"));
+        assertTrue(r.getDetail().contains("build failed"));
     }
 
     private static EvalCase htmlCase() {

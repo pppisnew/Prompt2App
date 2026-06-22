@@ -1,0 +1,273 @@
+{
+  "roundId" : 2,
+  "generatedAt" : "2026-06-22T14:19:53.279841",
+  "schemaVersion" : 1,
+  "invokerName" : "direct-service",
+  "cases" : [ {
+    "caseId" : "001-personal-resume-page",
+    "strategy" : "HTML",
+    "finalScore" : 100.0,
+    "veto" : false,
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : 100.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "002-coffee-shop-multipage",
+    "strategy" : "MULTI_FILE",
+    "finalScore" : 100.0,
+    "veto" : false,
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : 100.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "003-todo-app-vue",
+    "strategy" : "VUE_PROJECT",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "004-saas-landing-hero",
+    "strategy" : "HTML",
+    "finalScore" : 100.0,
+    "veto" : false,
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : 100.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "005-error-404-page",
+    "strategy" : "HTML",
+    "finalScore" : 100.0,
+    "veto" : false,
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : 100.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "006-wedding-invitation-card",
+    "strategy" : "HTML",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "render",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : 100.0,
+      "render" : -1.0
+    }
+  }, {
+    "caseId" : "007-coming-soon-launch",
+    "strategy" : "HTML",
+    "finalScore" : 90.0,
+    "veto" : false,
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : 80.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "008-pricing-table-3-tier",
+    "strategy" : "HTML",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "009-recipe-card-printable",
+    "strategy" : "HTML",
+    "finalScore" : 100.0,
+    "veto" : false,
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : 100.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "010-photographer-portfolio",
+    "strategy" : "MULTI_FILE",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : -1.0
+    }
+  }, {
+    "caseId" : "011-bookstore-multipage",
+    "strategy" : "MULTI_FILE",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : -1.0
+    }
+  }, {
+    "caseId" : "012-tech-conference-site",
+    "strategy" : "MULTI_FILE",
+    "finalScore" : 92.85714285714286,
+    "veto" : false,
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : 85.71428571428571,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "013-restaurant-bistro-site",
+    "strategy" : "MULTI_FILE",
+    "finalScore" : 100.0,
+    "veto" : false,
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : 100.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "014-ngo-charity-site",
+    "strategy" : "MULTI_FILE",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : -1.0
+    }
+  }, {
+    "caseId" : "015-university-cs-program",
+    "strategy" : "MULTI_FILE",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : -1.0
+    }
+  }, {
+    "caseId" : "016-product-launch-microsite",
+    "strategy" : "MULTI_FILE",
+    "finalScore" : 100.0,
+    "veto" : false,
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : 100.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "017-weather-dashboard-vue",
+    "strategy" : "VUE_PROJECT",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "018-markdown-editor-vue",
+    "strategy" : "VUE_PROJECT",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "019-pomodoro-timer-vue",
+    "strategy" : "VUE_PROJECT",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "020-expense-tracker-vue",
+    "strategy" : "VUE_PROJECT",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "021-kanban-board-vue",
+    "strategy" : "VUE_PROJECT",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "022-recipe-search-vue",
+    "strategy" : "VUE_PROJECT",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "render",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : 83.33333333333334,
+      "render" : -1.0
+    }
+  }, {
+    "caseId" : "023-quiz-app-vue",
+    "strategy" : "VUE_PROJECT",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "024-url-shortener-vue",
+    "strategy" : "VUE_PROJECT",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : 100.0
+    }
+  }, {
+    "caseId" : "025-tic-tac-toe-vue",
+    "strategy" : "VUE_PROJECT",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : 100.0
+    }
+  } ]
+}

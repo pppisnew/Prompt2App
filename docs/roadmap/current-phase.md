@@ -69,12 +69,31 @@ Phase 8 合入后用户端到端测试暴露事故链 #1–#10，已全部修复
 
 ---
 
+## Eval 增量（2026-06-21 / 06-22）
+
+Phase 8 锁定后，Eval 维度做了两轮增量修复：
+
+| 日期 | Task | 结果 |
+| --- | --- | --- |
+| 2026-06-21 | [MULTI_FILE + VUE_PROJECT 0 分修复](../tasks/2026-06-21-multi-file-vue-eval-fix.md) | 总均分 19.75 → 55.06；MULTI_FILE 三层根因（prompt/parser/saver）修复 |
+| 2026-06-21/22 | [VUE Render 评分修复（build 可观测 + RenderScorer 真检 dist）](../tasks/2026-06-21-vue-render-build-observability.md) | **VUE_PROJECT Render 0→100（10/10）**，VUE 维度均分 0→18.46；总均分 55.06→35.38 但**经逐 case 实测确证回归源是 LLM 抽样随机性，非代码引入** |
+| 2026-06-22 | [评测多轮均分 + temperature=0 + 断点续跑](../tasks/2026-06-22-eval-multi-round-determinism.md)（[ADR-0013](../adr/0013-eval-multi-round-determinism.md)）| ✅ 完成。**3 轮均分 40.83 ± 7.52 / 100**（HTML 80.18±29.65 / MULTI 57.44±21.77 / VUE 0.00±0.00）。揭示 VUE 维度 `readMergedOutput` bug 是当前最大杠杆项（10/10 case 全 0 分），方案 D 已定但待下个独立 task 实施 |
+| 2026-06-22 | [VUE mergedOutput 改读源码 + 文件清单（方案 D）](../tasks/2026-06-22-vue-mergedoutput-source-fix.md) | ✅ 完成。VUE Rubric 通过率 0/10 → **6/10**（离线验证，`package.json` 命中率 0→10/10）。剩余 4 个 miss 是 rubric 设计问题（`addEventListener`/`摄氏`/`解析`/`X 胜利`），独立 backlog |
+
+---
+
 ## 下一 Phase 预告
 
 无固定计划。Phase 8 是按需启动的"v1.0 后增量"。后续 Phase 9+ 按需 + 走 ADR + 走 Charter §6 修订流程启动。
 
 候选议题（非承诺，仅记录）：
+- **根因 A：Vue prompt 模板要求 import 路径与已声明文件清单一致**（独立 task，杜绝 LLM 生成不存在引用导致 build 失败）
+- ~~**LLM 评测随机性治理**~~ → ✅ 已落地于 ADR-0013 / [2026-06-22 task](../tasks/2026-06-22-eval-multi-round-determinism.md)
+- **LLM-Judge 第三维度启用**：`LlmJudgeScorer`/`LlmJudgeService` 已就位，`RealEvalRunner` 当前仅挂 Rubric+Render 两维（注释写"先用两维"），把第三维接入即可
+- **EvalRunner.runFull 报告路径 / prevReport 路径不一致**：本轮 reportFile=baseline-real.md，prevReport 却指向 baseline.md=stub 报告，导致 Diff 输出 `No previous baseline found`（注：ADR-0013 切到 MultiRound 后此路径已废弃，旧 EvalRunner 仍存）
+- **AiModelMonitorListener 在评测无 HTTP 上下文环境抛 NPE**：被 langchain4j catch 不阻断评分，但日志噪音；评估是否在 listener 入口加 null 守卫
 - 配置项校验（`@Validated` + JSR-380 约束）
 - 配置审计 endpoint（`/actuator/configprops`）
 - 多环境密钥的 Vault / Sealed Secrets 集成（仅当对外服务化时考虑）
+- ~~CI workflow 接入~~ → ✅ **已澄清**（Phase 5 / ADR-0005 §7 已建好 `.github/workflows/eval.yml`；2026-06-22 只读探索证实测试 pattern 自然覆盖新增 56 测试）。小遗留：README CI badge URL 默认指 master，feature 分支状态不显示——commit + push 后修
 - `AiCodeGeneratorFacade.processCodeStream` 的 `catch(Exception)` 吞异常不向 SSE 透传 `onError`（backlog，记于 ADR-0011 §10.3）
