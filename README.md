@@ -36,7 +36,7 @@
 >
 > **难点故事**（任选一个 5 分钟）：① **VUE Render 评分器与产物读取互斥**导致 10/10 VUE case 全 0 分的根因排查；② 一次评测跑完总分倒退 20 分，**逐 case 实测**确证回归源是 LLM 抽样而非代码，进而做了多轮均分治理。
 >
-> **量化**：3 轮均分 `40.83 ± 7.52` 分 / VUE 维度 0 → `0`（已识别 bug：readMergedOutput 读错文件，方案 D 待修） / 13 ADR / 20 Task Records / 32 测试类、56 eval 测试方法。
+> **量化**：3 轮均分 `62.21 ± 7.82` 分 / VUE 维度 0 → `47.70`（readMergedOutput 方案 D 修复后）/ 13 ADR / 22 Task Records / 32 测试类、60 eval 测试方法。
 >
 > **诚实**：项目里明确记录了 2 次治理违规事件 + 1 次擅自偏离 Task Record 设计的事实——比"完美履历"更说明真实工程现场。
 
@@ -116,7 +116,7 @@ Round 3 ──┘    Markdown 单轮报告 (人读，单轮排查)
 - **触发原因**：上一轮代码改动跑完总分 55→35，**逐 case 实测确证是 LLM 抽样波动**而非代码回归，Charter §4 "评测回归 >5%" 红线被 LLM 噪声触发，治理成本不可持续
 - **解决方案**：3 轮跑 + `temperature=0` 强制覆盖（`@TestPropertySource` 只在评测路径生效、不污染生产 0.7）+ 断点续跑（单轮失败可独立补跑）
 - **报告格式**：每 case 三轮分数矩阵 + 均分 + 标准差；策略子均分；总分 ± 标准差
-- **当前结果**：`3 轮均分 40.83 ± 7.52 / 100`（[最新 baseline](./eval/reports/baseline-real.md)）—— HTML 80.18±29.65 / MULTI_FILE 57.44±21.77 / VUE 0.00±0.00（VUE 维度受 readMergedOutput bug 影响为 0，[方案 D 待修](./docs/tasks/2026-06-22-eval-multi-round-determinism.md#附round-1-实证数据--p0-2-重新定位2026-06-22-1314-评测中诊断)）
+- **当前结果**：`3 轮均分 62.21 ± 7.82 / 100`（[最新 baseline](./eval/reports/baseline-real.md)）—— HTML 78.67±22.05 / MULTI_FILE 65.96±24.51 / VUE 47.70±27.58（方案 D 修复 readMergedOutput 后 VUE 从 0 → 47.70）
 - **关键设计**：用 appId 高位编码 round（Round N 的 appId 从 N×1,000,000+ 起）实现产物隔离，**零侵入** 5 处 `codeOutputDir` 调用方
 - **代价**：单次评测 3× token + ~3h；但 Charter §4 红线重新可信
 
@@ -229,7 +229,7 @@ sql/generation_metric.sql   ← Phase 6 表结构
 | 单元测试类 | 32 个 |
 | eval 包测试方法 | 56 个 |
 | 评测 case | 25 个 × 3 轮 |
-| 最新评测总均分 | `40.83 ± 7.52` / 100（3 轮均分，HTML 80.18 / MULTI 57.44 / VUE 0.00） |
+| 最新评测总均分 | `62.21 ± 7.82` / 100（3 轮均分，HTML 78.67 / MULTI 65.96 / VUE 47.70） |
 | Git 提交 | 详见 git log |
 
 ---
@@ -272,7 +272,7 @@ cat eval/reports/baseline-real.md
 > 核心交付：
 > - **AI Router 规则 + LLM 兜底两层路由**（25 case 评测 80% 准确率 / 88% 命中率）
 > - **Tool Calling Agent 三层安全防御**（27 单测覆盖路径穿越 / 软链接逃逸 / 调用熔断）
-> - **真实 LLM 三维评测体系**：编译 + 渲染 + LLM-as-Judge，25 case × 3 轮均分 ± 标准差（最新 baseline：**40.83 ± 7.52** / 100）
+> - **真实 LLM 三维评测体系**：编译 + 渲染 + LLM-as-Judge，25 case × 3 轮均分 ± 标准差（最新 baseline：**62.21 ± 7.82** / 100）
 > - **评测稳定性治理**（ADR-0013）：识别 LLM 单跑波动 ±20 分问题，引入 `temperature=0` + 多轮均分 + 断点续跑机制，让"代码回归 vs LLM 抽样噪声"可量化区分
 > - **生成质量指标埋点**：15 字段 metric 表 + 4 类聚合 SQL 报表
 >

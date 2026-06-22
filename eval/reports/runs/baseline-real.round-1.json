@@ -1,27 +1,29 @@
 {
   "roundId" : 1,
-  "generatedAt" : "2026-06-22T13:07:07.708616",
+  "generatedAt" : "2026-06-22T22:29:19.9453",
   "schemaVersion" : 1,
   "invokerName" : "direct-service",
   "cases" : [ {
     "caseId" : "001-personal-resume-page",
     "strategy" : "HTML",
-    "finalScore" : 100.0,
+    "finalScore" : 85.0,
     "veto" : false,
     "invoked" : true,
     "perDim" : {
       "rubric" : 100.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 85.0
     }
   }, {
     "caseId" : "002-coffee-shop-multipage",
     "strategy" : "MULTI_FILE",
-    "finalScore" : 100.0,
+    "finalScore" : 95.0,
     "veto" : false,
     "invoked" : true,
     "perDim" : {
       "rubric" : 100.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 95.0
     }
   }, {
     "caseId" : "003-todo-app-vue",
@@ -32,139 +34,153 @@
     "invoked" : true,
     "perDim" : {
       "rubric" : -1.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 95.0
     }
   }, {
     "caseId" : "004-saas-landing-hero",
     "strategy" : "HTML",
-    "finalScore" : 100.0,
+    "finalScore" : 95.0,
     "veto" : false,
     "invoked" : true,
     "perDim" : {
       "rubric" : 100.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 95.0
     }
   }, {
     "caseId" : "005-error-404-page",
     "strategy" : "HTML",
-    "finalScore" : 100.0,
+    "finalScore" : 92.0,
     "veto" : false,
     "invoked" : true,
     "perDim" : {
       "rubric" : 100.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 92.0
     }
   }, {
     "caseId" : "006-wedding-invitation-card",
     "strategy" : "HTML",
-    "finalScore" : 100.0,
+    "finalScore" : 88.0,
     "veto" : false,
     "invoked" : true,
     "perDim" : {
       "rubric" : 100.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 88.0
     }
   }, {
     "caseId" : "007-coming-soon-launch",
     "strategy" : "HTML",
-    "finalScore" : 100.0,
+    "finalScore" : 95.0,
     "veto" : false,
     "invoked" : true,
     "perDim" : {
       "rubric" : 100.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 95.0
     }
   }, {
     "caseId" : "008-pricing-table-3-tier",
     "strategy" : "HTML",
-    "finalScore" : 100.0,
-    "veto" : false,
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
     "invoked" : true,
     "perDim" : {
-      "rubric" : 100.0,
-      "render" : 100.0
+      "rubric" : -1.0,
+      "render" : 100.0,
+      "llm-judge" : 93.0
     }
   }, {
     "caseId" : "009-recipe-card-printable",
     "strategy" : "HTML",
-    "finalScore" : 93.75,
+    "finalScore" : 88.0,
     "veto" : false,
     "invoked" : true,
     "perDim" : {
       "rubric" : 87.5,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 88.0
     }
   }, {
     "caseId" : "010-photographer-portfolio",
     "strategy" : "MULTI_FILE",
-    "finalScore" : 100.0,
+    "finalScore" : 95.0,
     "veto" : false,
     "invoked" : true,
     "perDim" : {
       "rubric" : 100.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 95.0
     }
   }, {
     "caseId" : "011-bookstore-multipage",
     "strategy" : "MULTI_FILE",
-    "finalScore" : 100.0,
+    "finalScore" : 90.0,
     "veto" : false,
     "invoked" : true,
     "perDim" : {
       "rubric" : 100.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 90.0
     }
   }, {
     "caseId" : "012-tech-conference-site",
     "strategy" : "MULTI_FILE",
-    "finalScore" : 0.0,
-    "veto" : true,
-    "vetoBy" : "rubric",
-    "invoked" : true,
-    "perDim" : {
-      "rubric" : -1.0,
-      "render" : -1.0
-    }
-  }, {
-    "caseId" : "013-restaurant-bistro-site",
-    "strategy" : "MULTI_FILE",
-    "finalScore" : 0.0,
-    "veto" : true,
-    "vetoBy" : "rubric",
-    "invoked" : true,
-    "perDim" : {
-      "rubric" : -1.0,
-      "render" : -1.0
-    }
-  }, {
-    "caseId" : "014-ngo-charity-site",
-    "strategy" : "MULTI_FILE",
-    "finalScore" : 100.0,
-    "veto" : false,
-    "invoked" : true,
-    "perDim" : {
-      "rubric" : 100.0,
-      "render" : 100.0
-    }
-  }, {
-    "caseId" : "015-university-cs-program",
-    "strategy" : "MULTI_FILE",
-    "finalScore" : 100.0,
-    "veto" : false,
-    "invoked" : true,
-    "perDim" : {
-      "rubric" : 100.0,
-      "render" : 100.0
-    }
-  }, {
-    "caseId" : "016-product-launch-microsite",
-    "strategy" : "MULTI_FILE",
-    "finalScore" : 92.85714285714286,
+    "finalScore" : 95.0,
     "veto" : false,
     "invoked" : true,
     "perDim" : {
       "rubric" : 85.71428571428571,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 95.0
+    }
+  }, {
+    "caseId" : "013-restaurant-bistro-site",
+    "strategy" : "MULTI_FILE",
+    "finalScore" : 90.0,
+    "veto" : false,
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : 100.0,
+      "render" : 100.0,
+      "llm-judge" : 90.0
+    }
+  }, {
+    "caseId" : "014-ngo-charity-site",
+    "strategy" : "MULTI_FILE",
+    "finalScore" : 0.0,
+    "veto" : true,
+    "vetoBy" : "rubric",
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : -1.0,
+      "render" : -1.0,
+      "llm-judge" : 0.0
+    }
+  }, {
+    "caseId" : "015-university-cs-program",
+    "strategy" : "MULTI_FILE",
+    "finalScore" : 92.0,
+    "veto" : false,
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : 100.0,
+      "render" : 100.0,
+      "llm-judge" : 92.0
+    }
+  }, {
+    "caseId" : "016-product-launch-microsite",
+    "strategy" : "MULTI_FILE",
+    "finalScore" : 92.0,
+    "veto" : false,
+    "invoked" : true,
+    "perDim" : {
+      "rubric" : 85.71428571428571,
+      "render" : 100.0,
+      "llm-judge" : 92.0
     }
   }, {
     "caseId" : "017-weather-dashboard-vue",
@@ -175,7 +191,8 @@
     "invoked" : true,
     "perDim" : {
       "rubric" : -1.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 90.0
     }
   }, {
     "caseId" : "018-markdown-editor-vue",
@@ -186,18 +203,19 @@
     "invoked" : true,
     "perDim" : {
       "rubric" : -1.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 72.0
     }
   }, {
     "caseId" : "019-pomodoro-timer-vue",
     "strategy" : "VUE_PROJECT",
-    "finalScore" : 0.0,
-    "veto" : true,
-    "vetoBy" : "rubric",
+    "finalScore" : 92.0,
+    "veto" : false,
     "invoked" : true,
     "perDim" : {
-      "rubric" : -1.0,
-      "render" : 100.0
+      "rubric" : 100.0,
+      "render" : 100.0,
+      "llm-judge" : 92.0
     }
   }, {
     "caseId" : "020-expense-tracker-vue",
@@ -208,7 +226,8 @@
     "invoked" : true,
     "perDim" : {
       "rubric" : -1.0,
-      "render" : 100.0
+      "render" : -1.0,
+      "llm-judge" : 0.0
     }
   }, {
     "caseId" : "021-kanban-board-vue",
@@ -219,7 +238,8 @@
     "invoked" : true,
     "perDim" : {
       "rubric" : -1.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 90.0
     }
   }, {
     "caseId" : "022-recipe-search-vue",
@@ -230,7 +250,8 @@
     "invoked" : true,
     "perDim" : {
       "rubric" : -1.0,
-      "render" : 100.0
+      "render" : -1.0,
+      "llm-judge" : 0.0
     }
   }, {
     "caseId" : "023-quiz-app-vue",
@@ -241,7 +262,8 @@
     "invoked" : true,
     "perDim" : {
       "rubric" : -1.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 92.0
     }
   }, {
     "caseId" : "024-url-shortener-vue",
@@ -252,7 +274,8 @@
     "invoked" : true,
     "perDim" : {
       "rubric" : -1.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 90.0
     }
   }, {
     "caseId" : "025-tic-tac-toe-vue",
@@ -263,7 +286,8 @@
     "invoked" : true,
     "perDim" : {
       "rubric" : -1.0,
-      "render" : 100.0
+      "render" : 100.0,
+      "llm-judge" : 82.0
     }
   } ]
 }
