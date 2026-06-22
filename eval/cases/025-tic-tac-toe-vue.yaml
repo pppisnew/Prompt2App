@@ -25,7 +25,7 @@ rubric:
     - "vue"
     - "ref"
     - "computed"
-    - "X 胜利"
+    - "winner"                  # 胜负判定（LLM 常用 winner 而非"X 胜利"）
   must_not_contain:
     - "TODO"
     - "options API"

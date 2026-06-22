@@ -24,7 +24,7 @@ rubric:
     - "ref"
     - "setInterval"
     - "computed"
-    - "解析"
+    - "result"                  # quiz 结果/答案展示（LLM 常用 result 而非"解析"）
   must_not_contain:
     - "TODO"
     - "options API"

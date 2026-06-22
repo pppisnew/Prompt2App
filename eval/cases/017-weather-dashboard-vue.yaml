@@ -25,8 +25,8 @@ rubric:
     - "ref"
     - "computed"
     - "transition"
-    - "摄氏"
-    - "华氏"
+    - "°C"                      # 温度单位符号（LLM 常用 °C/°F 而非中文"摄氏"/"华氏"）
+    - "°F"
   must_not_contain:
     - "TODO"
     - "options API"

@@ -24,7 +24,7 @@ rubric:
     - "vue"
     - "ref"                     # 或 reactive，体现 Composition API
     - "localStorage"
-    - "addEventListener"        # 回车键监听 或 watch
+    - "@click"                  # Vue 模板事件绑定（addEventListener 的 Vue 等价物）
   must_not_contain:
     - "options API"             # 期望 Composition API
     - "TODO"
