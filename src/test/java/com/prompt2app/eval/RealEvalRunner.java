@@ -46,6 +46,9 @@ class RealEvalRunner {
     @Resource
     private com.prompt2app.infra.config.Prompt2AppProperties properties;
 
+    @Resource
+    private LlmJudgeService llmJudgeService;
+
     @Test
     void runRealEval() throws Exception {
         log.info("========== 真实 LLM 评测启动 (ADR-0013 多轮模式) ==========");
@@ -56,10 +59,11 @@ class RealEvalRunner {
         // 构建真实 invoker（DirectServiceInvoker 支持 setRoundContext 切轮）
         DirectServiceInvoker invoker = new DirectServiceInvoker(facade, properties);
 
-        // 三维评分先用 rubric + render（LLM-Judge 由 P1-1 task 启用，独立 task）
+        // 三维评分（ADR-0005）：rubric（硬门控）+ render（硬门控）+ llm-judge（软评分，不 veto）
         List<Scorer> scorers = List.of(
                 new RubricScorer(),
-                new RenderScorer()
+                new RenderScorer(),
+                new LlmJudgeScorer(llmJudgeService)
         );
 
         MultiRoundEvalRunner runner = new MultiRoundEvalRunner(

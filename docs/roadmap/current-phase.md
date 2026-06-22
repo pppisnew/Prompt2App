@@ -89,7 +89,7 @@ Phase 8 锁定后，Eval 维度做了两轮增量修复：
 候选议题（非承诺，仅记录）：
 - **根因 A：Vue prompt 模板要求 import 路径与已声明文件清单一致**（独立 task，杜绝 LLM 生成不存在引用导致 build 失败）
 - ~~**LLM 评测随机性治理**~~ → ✅ 已落地于 ADR-0013 / [2026-06-22 task](../tasks/2026-06-22-eval-multi-round-determinism.md)
-- **LLM-Judge 第三维度启用**：`LlmJudgeScorer`/`LlmJudgeService` 已就位，`RealEvalRunner` 当前仅挂 Rubric+Render 两维（注释写"先用两维"），把第三维接入即可
+- ~~**LLM-Judge 第三维度启用**~~ → ✅ 已落地于 [2026-06-22 task](../tasks/2026-06-22-llm-judge-enable.md)（`LlmJudgeServiceFactory` 织入 + `RealEvalRunner` 三维 scorers）
 - **EvalRunner.runFull 报告路径 / prevReport 路径不一致**：本轮 reportFile=baseline-real.md，prevReport 却指向 baseline.md=stub 报告，导致 Diff 输出 `No previous baseline found`（注：ADR-0013 切到 MultiRound 后此路径已废弃，旧 EvalRunner 仍存）
 - **AiModelMonitorListener 在评测无 HTTP 上下文环境抛 NPE**：被 langchain4j catch 不阻断评分，但日志噪音；评估是否在 listener 入口加 null 守卫
 - 配置项校验（`@Validated` + JSR-380 约束）
