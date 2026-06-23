@@ -77,8 +77,10 @@ Phase 8 锁定后，Eval 维度做了两轮增量修复：
 | --- | --- | --- |
 | 2026-06-21 | [MULTI_FILE + VUE_PROJECT 0 分修复](../tasks/2026-06-21-multi-file-vue-eval-fix.md) | 总均分 19.75 → 55.06；MULTI_FILE 三层根因（prompt/parser/saver）修复 |
 | 2026-06-21/22 | [VUE Render 评分修复（build 可观测 + RenderScorer 真检 dist）](../tasks/2026-06-21-vue-render-build-observability.md) | **VUE_PROJECT Render 0→100（10/10）**，VUE 维度均分 0→18.46；总均分 55.06→35.38 但**经逐 case 实测确证回归源是 LLM 抽样随机性，非代码引入** |
-| 2026-06-22 | [评测多轮均分 + temperature=0 + 断点续跑](../tasks/2026-06-22-eval-multi-round-determinism.md)（[ADR-0013](../adr/0013-eval-multi-round-determinism.md)）| ✅ 完成。**3 轮均分 40.83 ± 7.52 / 100**（HTML 80.18±29.65 / MULTI 57.44±21.77 / VUE 0.00±0.00）。揭示 VUE 维度 `readMergedOutput` bug 是当前最大杠杆项（10/10 case 全 0 分），方案 D 已定但待下个独立 task 实施 |
-| 2026-06-22 | [VUE mergedOutput 改读源码 + 文件清单（方案 D）](../tasks/2026-06-22-vue-mergedoutput-source-fix.md) | ✅ 完成。VUE Rubric 通过率 0/10 → **6/10**（离线验证，`package.json` 命中率 0→10/10）。剩余 4 个 miss 是 rubric 设计问题（`addEventListener`/`摄氏`/`解析`/`X 胜利`），独立 backlog |
+| 2026-06-22 | [评测多轮均分 + temperature=0 + 断点续跑](../tasks/2026-06-22-eval-multi-round-determinism.md)（[ADR-0013](../adr/0013-eval-multi-round-determinism.md)）| ✅ 完成。**首轮 baseline 40.83 ± 7.52 / 100**（HTML 80.18±29.65 / MULTI 57.44±21.77 / VUE 0.00±0.00）。揭示 VUE 维度 `readMergedOutput` bug，方案 D 由后续 task 实施 |
+| 2026-06-22 | [VUE mergedOutput 改读源码 + 文件清单（方案 D）](../tasks/2026-06-22-vue-mergedoutput-source-fix.md) | ✅ 完成。VUE Rubric 通过率 0/10 → **6/10**（离线验证，`package.json` 命中率 0→10/10）。剩余 4 个 miss 是 rubric 设计问题（`addEventListener`/`摄氏`/`解析`/`X 胜利`），由 rubric 调优 commit 修复 |
+| 2026-06-22 | [LLM-Judge 第三维度启用](../tasks/2026-06-22-llm-judge-enable.md) | ✅ 完成。`LlmJudgeServiceFactory` 织入 + `RealEvalRunner` 三维 scorers + `@UserMessage`/`@V` 参数注解修复，60 单测全绿 |
+| 2026-06-22 | **验证评测**：3 轮均分 **62.21 ± 7.82**（commit `3c02b66`）| ✅ 完成。**总分 40.83 → 62.21（+21.38）**，VUE 维度 0.00 → **47.70**（方案 D 奏效），Judge 维度真实评分 85-95（注解修复奏效）。HTML 78.67 / MULTI 65.96 |
 
 ---
 

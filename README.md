@@ -20,7 +20,7 @@
 
 - **5 个面试可独立展开 5 分钟的核心命题**（见下文）
 - **13 篇 ADR**（架构决策记录），每个关键选择都有可追溯的论证 + 备选方案 + 复盘指标——包括 **3 篇明确写「不做什么」的反向 ADR**
-- **20 篇 Task Records**记录每个 >30 分钟的工作，**含 2 次治理违规复盘**——诚实记录代码以外的事实
+- **22 篇 Task Records**记录每个 >30 分钟的工作，**含 2 次治理违规复盘**——诚实记录代码以外的事实
 - **真实 LLM 三轮均分评测体系**：25 case × 3 轮取均值±标准差，治理 LLM 抽样波动（单跑曾出现 ±20 分波动）
 - **不堆砌技术栈**：明确写下 9 项「不做」并用 ADR 论证，专注做透 5 个核心能力
 
@@ -267,7 +267,7 @@ cat eval/reports/baseline-real.md
 
 > **Prompt2App · AI 网页生成平台**（个人作品集，[github.com/pppisnew/Prompt2App](https://github.com/pppisnew/Prompt2App)）
 >
-> 基于 Spring Boot 3 + LangChain4j 1.5.1 构建。从教学微服务 demo 重构为模块化单体 AI 工程项目，通过 **13 篇 ADR + 20 篇 Task Records** 完整记录决策与演进。
+> 基于 Spring Boot 3 + LangChain4j 1.5.1 构建。从教学微服务 demo 重构为模块化单体 AI 工程项目，通过 **13 篇 ADR + 22 篇 Task Records** 完整记录决策与演进。
 >
 > 核心交付：
 > - **AI Router 规则 + LLM 兜底两层路由**（25 case 评测 80% 准确率 / 88% 命中率）

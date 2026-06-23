@@ -40,6 +40,7 @@ YYYY-MM-DD-<phase>-<slug>.md
 | 2026-06-20 | 前端 | [UI/UX 系统性升级 — 崩铁设计语言 × 专业 AI 产品](./2026-06-20-frontend-ui-ux-redesign.md) | 项目作者 + AI | ✅ 完成 |
 | 2026-06-21 | Eval | [MULTI_FILE + VUE_PROJECT 0 分修复 + 三轮评测 19.75→55.06](./2026-06-21-multi-file-vue-eval-fix.md) | 项目作者 + AI | ✅ 完成 |
 | 2026-06-21 | Eval | [VUE_PROJECT Render 评分修复（build 可观测 + RenderScorer 真检 dist）](./2026-06-21-vue-render-build-observability.md) | 项目作者 + AI | ✅ 完成（VUE Render 0→100，揭示 LLM 评测随机性）|
-| 2026-06-22 | Eval | [评测多轮均分 + temperature=0 + 断点续跑（ADR-0013）](./2026-06-22-eval-multi-round-determinism.md) | 项目作者 + AI | ✅ 完成（3 轮均分 **40.83 ± 7.52**；揭示 VUE 维度 readMergedOutput bug，方案 D 待修）|
+| 2026-06-22 | Eval | [评测多轮均分 + temperature=0 + 断点续跑（ADR-0013）](./2026-06-22-eval-multi-round-determinism.md) | 项目作者 + AI | ✅ 完成（首轮 baseline **40.83 ± 7.52**；揭示 VUE 维度 readMergedOutput bug，由后续 task 修复）|
 | 2026-06-22 | Eval | [VUE 评分 mergedOutput 改读源码 + 文件清单（方案 D）](./2026-06-22-vue-mergedoutput-source-fix.md) | 项目作者 + AI | ✅ 完成（VUE Rubric 0/10 → **6/10** 通过，离线验证 6 case 满分）|
-| 2026-06-22 | Eval | [LLM-Judge 第三维度启用](./2026-06-22-llm-judge-enable.md) | 项目作者 + AI | ✅ 完成（`LlmJudgeServiceFactory` 织入 + `RealEvalRunner` 三维 scorers，60 单测全绿）|
+| 2026-06-22 | Eval | [LLM-Judge 第三维度启用](./2026-06-22-llm-judge-enable.md) | 项目作者 + AI | ✅ 完成（`LlmJudgeServiceFactory` 织入 + `RealEvalRunner` 三维 scorers，60 单测全绿；含 `@UserMessage` 参数注解修复）|
+| 2026-06-22 | Eval | 验证评测：3 轮均分 **62.21 ± 7.82**（VUE 0→47.70）| 项目作者 + AI | ✅ 完成（验证 P0-2 + P1-1 + rubric 调优，commit `3c02b66`）|

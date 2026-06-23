@@ -208,7 +208,7 @@ public InvocationResult invoke(EvalCase evalCase, Integer roundId) {
   - Round 1: 51.46
   - Round 2: 35.31
   - Round 3: 35.71
-  - **3 轮均分: 40.83 ± 7.52 / 100**
+  - **3 轮均分: 40.83 ± 7.52 / 100**（本 task 完成时的首轮 baseline；后续 P0-2 + P1-1 + rubric 调优后总分升至 62.21 ± 7.82，详见 `eval/reports/baseline-real.md`）
   - CPU 调试：MultiRound 编排正确、断点续跑未误触发、Round JSON+MD 双写入、聚合正确、报告格式正确
 - [x] 中间报告完整：`eval/reports/runs/baseline-real.round-{1,2,3}.{json,md}` 全部存在
 - [x] temperature=0 生效（日志 HTTP 请求体含 `"temperature" : 0.0` 三次）
