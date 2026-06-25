@@ -1,11 +1,13 @@
 package com.prompt2app.agent.codegen.saver;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.prompt2app.agent.model.MultiFileCodeResult;
 import com.prompt2app.infra.exception.BusinessException;
 import com.prompt2app.infra.exception.ErrorCode;
 import com.prompt2app.app.model.enums.CodeGenTypeEnum;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -46,6 +48,38 @@ public class MultiFileCodeFileSaverTemplate extends CodeFileSaverTemplate<MultiF
         writeToFile(baseDirPath, "style.css", result.getCssCode());
         // 保存 JavaScript 文件
         writeToFile(baseDirPath, "script.js", result.getJsCode());
+        // 兜底：MULTI_FILE 产物文件名从 <title> 提取中文（如"米哈游角色图鉴-首页.html"），
+        // 没有 index.html。但 StaticResourceController 预览 /{key}/ 默认找 index.html → 404。
+        // 选择优先级：已有 index.html → 不动；文件名含"首页"/"index"/"home" → 复制；否则第一个 HTML。
+        ensureIndexHtml(baseDirPath);
+    }
+
+    /** 确保目录有 index.html 作为默认入口页（预览 + 部署共用）。 */
+    private void ensureIndexHtml(String baseDirPath) {
+        File indexFile = new File(baseDirPath, "index.html");
+        if (indexFile.exists()) {
+            return;  // 已有，不重复
+        }
+        File dir = new File(baseDirPath);
+        File[] htmls = dir.listFiles((d, n) -> n.endsWith(".html"));
+        if (htmls == null || htmls.length == 0) {
+            return;  // 无 HTML，无法兜底
+        }
+        // 优先：文件名含"首页"/"index"/"home"
+        File chosen = null;
+        for (File f : htmls) {
+            String name = f.getName().toLowerCase();
+            if (name.contains("首页") || name.contains("index") || name.contains("home")) {
+                chosen = f;
+                break;
+            }
+        }
+        // 其次：第一个 HTML（按字母序，保证确定性）
+        if (chosen == null) {
+            java.util.Arrays.sort(htmls, java.util.Comparator.comparing(File::getName));
+            chosen = htmls[0];
+        }
+        FileUtil.copy(chosen.toPath(), indexFile.toPath());
     }
 
     /** 按页拆分 HTML（支持 <!-- filename.html --> + <!DOCTYPE 双重信号）。 */
