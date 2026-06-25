@@ -197,6 +197,9 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "应用部署失败：" + e.getMessage());
         }
+        // 8.1 兜底：MULTI_FILE 产物文件名是 <title> 提取的中文，没有 index.html
+        //     部署后访问 /{deployKey}/ 默认找 index.html，需复制一个入口页
+        ensureIndexHtml(new File(deployDirPath));
         // 9. 更新数据库
         App updateApp = new App();
         updateApp.setId(appId);
@@ -208,6 +211,51 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
         String appDeployUrl = String.format("%s/%s/", properties.getStorage().getCodeDeployHost(), deployKey);        // 11. 异步生成截图并且更新应用封面
         generateAppScreenshotAsync(appId, appDeployUrl);
         return appDeployUrl;
+    }
+
+    /**
+     * 确保部署目录有 index.html 作为默认入口页。
+     *
+     * <p>MULTI_FILE 产物文件名是从 {@code <title>} 提取的中文（如"米哈游角色图鉴-首页.html"），
+     * 没有 index.html。但 {@link com.prompt2app.app.controller.StaticResourceController}
+     * 访问 {@code /{deployKey}/} 时默认找 index.html，找不到会 404。
+     *
+     * <p>选择优先级：
+     * <ol>
+     *   <li>已有 index.html → 不动</li>
+     *   <li>文件名含"首页"/"index"/"home"的 HTML → 复制为 index.html</li>
+     *   <li>第一个 HTML 文件（按字母序）→ 复制为 index.html</li>
+     * </ol>
+     *
+     * <p>HTML / VUE_PROJECT 策略的产物本身已有 index.html，此方法直接 return，无害。
+     *
+     * @param deployDir 部署目录
+     */
+    private void ensureIndexHtml(File deployDir) {
+        File indexFile = new File(deployDir, "index.html");
+        if (indexFile.exists()) {
+            return;  // 已有，不重复
+        }
+        File[] htmls = deployDir.listFiles((d, n) -> n.endsWith(".html"));
+        if (htmls == null || htmls.length == 0) {
+            return;  // 无 HTML，无法兜底
+        }
+        // 优先：文件名含"首页"/"index"/"home"
+        File chosen = null;
+        for (File f : htmls) {
+            String name = f.getName().toLowerCase();
+            if (name.contains("首页") || name.contains("index") || name.contains("home")) {
+                chosen = f;
+                break;
+            }
+        }
+        // 其次：第一个 HTML（按字母序，保证确定性）
+        if (chosen == null) {
+            java.util.Arrays.sort(htmls, java.util.Comparator.comparing(File::getName));
+            chosen = htmls[0];
+        }
+        FileUtil.copy(chosen.toPath(), indexFile.toPath());
+        log.info("[Deploy] 兜底 index.html: 复制 {} → index.html", chosen.getName());
     }
 
     /**

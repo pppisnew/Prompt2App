@@ -45,3 +45,4 @@ YYYY-MM-DD-<phase>-<slug>.md
 | 2026-06-22 | Eval | [LLM-Judge 第三维度启用](./2026-06-22-llm-judge-enable.md) | 项目作者 + AI | ✅ 完成（`LlmJudgeServiceFactory` 织入 + `RealEvalRunner` 三维 scorers，60 单测全绿；含 `@UserMessage` 参数注解修复）|
 | 2026-06-22 | Eval | 验证评测：3 轮均分 **62.21 ± 7.82**（VUE 0→47.70）| 项目作者 + AI | ✅ 完成（验证 P0-2 + P1-1 + rubric 调优，commit `3c02b66`）|
 | 2026-06-26 | Agent | [MultiFile 孤儿注释生成空壳 HTML 修复（方案 A）](./2026-06-26-multifile-orphan-comment-fix.md) | 项目作者 + AI | ✅ 完成（parser+saver 加 DOCTYPE filter，7 新单测 + 72 全量绿）|
+| 2026-06-26 | App | [MULTI_FILE 部署后无 index.html 导致 404 修复](./2026-06-26-multifile-deploy-index-html-fix.md) | 项目作者 + AI | ✅ 完成（deployApp 加 ensureIndexHtml 兜底，4 新单测 + 76 全量绿 + 离线验证）|
