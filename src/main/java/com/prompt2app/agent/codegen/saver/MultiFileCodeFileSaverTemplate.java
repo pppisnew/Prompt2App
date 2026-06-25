@@ -59,7 +59,8 @@ public class MultiFileCodeFileSaverTemplate extends CodeFileSaverTemplate<MultiF
             List<PageEntry> pages = new ArrayList<>();
             for (int i = 0; i < parts.length; i++) {
                 String page = parts[i].trim();
-                if (!page.isEmpty()) {
+                // 方案 A：丢弃孤儿注释页（无 <!DOCTYPE 的段落，2026-06-26 task）
+                if (!page.isEmpty() && page.toLowerCase().contains("<!doctype")) {
                     pages.add(new PageEntry(resolveHtmlFileName(page, i), page));
                 }
             }
@@ -70,7 +71,8 @@ public class MultiFileCodeFileSaverTemplate extends CodeFileSaverTemplate<MultiF
         List<PageEntry> pages = new ArrayList<>();
         for (int i = 0; i < doctypeParts.length; i++) {
             String page = doctypeParts[i].trim();
-            if (!page.isEmpty()) {
+            // 方案 A：丢弃孤儿注释页（无 <!DOCTYPE 的段落，2026-06-26 task）
+            if (!page.isEmpty() && page.toLowerCase().contains("<!doctype")) {
                 pages.add(new PageEntry(resolveHtmlFileName(page, i), page));
             }
         }

@@ -64,13 +64,18 @@ public class MultiFileCodeParser implements CodeParser<MultiFileCodeResult> {
     /**
      * 如果一个 HTML 代码块里含多个 <!DOCTYPE html>，按 DOCTYPE 拆分为多页。
      * 如果只有一个 DOCTYPE，返回单元素列表（不拆）。
+     *
+     * <p>方案 A（2026-06-26 task）：丢弃孤儿注释页——LLM 可能先列文件清单
+     * （{@code <!-- index.html -->} 等）再写实际内容，这些无 DOCTYPE 的孤儿注释
+     * 被 {@link #PAGE_SPLIT_PATTERN} 当成独立段落，需 filter 掉避免生成空壳文件。
      */
     private List<String> splitIfMultiPage(String htmlBlock) {
         String[] parts = PAGE_SPLIT_PATTERN.split(htmlBlock);
         List<String> pages = new ArrayList<>();
         for (String part : parts) {
             String trimmed = part.trim();
-            if (!trimmed.isEmpty()) {
+            // 只保留含 <!DOCTYPE 的段落（HTML 页必须有 DOCTYPE 才是完整页）
+            if (!trimmed.isEmpty() && trimmed.toLowerCase().contains("<!doctype")) {
                 pages.add(trimmed);
             }
         }
