@@ -86,6 +86,42 @@ class MultiFileCodeParserTest {
         assertEquals("console.log(\"hello\");", result.getJsCode());
     }
 
+    @Test
+    void commentAttachedToDocType_filenameFromComment() {
+        // 注释紧贴 DOCTYPE（本次 bug 的 LLM 输出格式）
+        // 旧 split 会把注释和 DOCTYPE 拆开 → 注释被丢 → 文件名从 title 提取中文
+        // 新 COMPLETE_PAGE_PATTERN 让注释跟着 DOCTYPE → 文件名从注释提取
+        String llmOutput = """
+                ```html
+                <!-- index.html -->
+                <!DOCTYPE html>
+                <html><head><title>米哈游角色图鉴 | 首页</title></head><body>首页</body></html>
+                <!-- genshin.html -->
+                <!DOCTYPE html>
+                <html><head><title>原神 · 角色图鉴</title></head><body>原神</body></html>
+                <!-- honkai3.html -->
+                <!DOCTYPE html>
+                <html><head><title>崩坏3 · 角色图鉴</title></head><body>崩坏3</body></html>
+                ```
+                """;
+
+        MultiFileCodeResult result = parser.parseCode(llmOutput);
+
+        assertNotNull(result.getHtmlCode());
+        // 应有 3 页（3 个 DOCTYPE），不含孤儿注释段
+        long sepCount = countOccurrences(result.getHtmlCode(),
+                "<!-- ===== FILE_SEPARATOR ===== -->");
+        assertEquals(2, sepCount, "应 3 页（2 分隔符）");
+
+        // 每页应保留注释前缀（让 saver 能提取注释文件名，而非中文 title）
+        assertTrue(result.getHtmlCode().contains("<!-- index.html -->"),
+                "index.html 注释应保留在页内容里");
+        assertTrue(result.getHtmlCode().contains("<!-- genshin.html -->"),
+                "genshin.html 注释应保留");
+        assertTrue(result.getHtmlCode().contains("<!-- honkai3.html -->"),
+                "honkai3.html 注释应保留");
+    }
+
     private int countOccurrences(String text, String substring) {
         int count = 0;
         int idx = 0;

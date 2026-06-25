@@ -93,21 +93,22 @@ public class MultiFileCodeFileSaverTemplate extends CodeFileSaverTemplate<MultiF
             List<PageEntry> pages = new ArrayList<>();
             for (int i = 0; i < parts.length; i++) {
                 String page = parts[i].trim();
-                // 方案 A：丢弃孤儿注释页（无 <!DOCTYPE 的段落，2026-06-26 task）
-                if (!page.isEmpty() && page.toLowerCase().contains("<!doctype")) {
+                if (!page.isEmpty()) {
                     pages.add(new PageEntry(resolveHtmlFileName(page, i), page));
                 }
             }
             return pages;
         }
-        // Fallback：按 <!DOCTYPE 拆分（LangChain4j structured output 路径）
-        String[] doctypeParts = PAGE_SPLIT_PATTERN.split(htmlCode);
+        // Fallback：用"完整页"正则匹配（注释跟着 DOCTYPE 走，2026-06-26 split 注释分离修复）
+        // 替代旧的 PAGE_SPLIT_PATTERN split + filter——旧方案把 <!-- x.html --> 和 <!DOCTYPE> 拆开
+        Matcher matcher = COMPLETE_PAGE_PATTERN.matcher(htmlCode);
         List<PageEntry> pages = new ArrayList<>();
-        for (int i = 0; i < doctypeParts.length; i++) {
-            String page = doctypeParts[i].trim();
-            // 方案 A：丢弃孤儿注释页（无 <!DOCTYPE 的段落，2026-06-26 task）
-            if (!page.isEmpty() && page.toLowerCase().contains("<!doctype")) {
+        int i = 0;
+        while (matcher.find()) {
+            String page = matcher.group().trim();
+            if (!page.isEmpty()) {
                 pages.add(new PageEntry(resolveHtmlFileName(page, i), page));
+                i++;
             }
         }
         return pages;
@@ -123,6 +124,18 @@ public class MultiFileCodeFileSaverTemplate extends CodeFileSaverTemplate<MultiF
     /** 按 <!DOCTYPE html> 拆分多页（lookahead，保留分隔符在结果里） */
     private static final Pattern PAGE_SPLIT_PATTERN = Pattern.compile(
             "(?=(?:<!--\\s*[\\w.-]+\\.html\\s*-->\\s*)?<!DOCTYPE\\s*html>)",
+            Pattern.CASE_INSENSITIVE);
+
+    /**
+     * 完整页正则：可选注释前缀 + DOCTYPE + 到下一个锚点前的内容（2026-06-26 split 注释分离修复）。
+     *
+     * <p>替代 {@link #PAGE_SPLIT_PATTERN} 的 lookahead split——旧 split 把
+     * {@code <!-- x.html -->\n<!DOCTYPE>} 拆成两段，注释段被丢导致文件名从 title 提取中文。
+     * 新正则匹配完整页，注释跟着 DOCTYPE 段走，{@link #resolveHtmlFileName} 能提取到注释文件名。
+     */
+    static final Pattern COMPLETE_PAGE_PATTERN = Pattern.compile(
+            "(?:<!--\\s*[\\w.-]+\\.html\\s*-->\\s*)?<!DOCTYPE\\s*html>[\\s\\S]*?"
+            + "(?=(?:<!--\\s*[\\w.-]+\\.html\\s*-->\\s*)?<!DOCTYPE\\s*html>|\\Z)",
             Pattern.CASE_INSENSITIVE);
 
     /** 从 <title> 标签提取文件名，提取失败则用 page_0.html / page_1.html ... */

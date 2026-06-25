@@ -102,10 +102,11 @@ class MultiFileCodeFileSaverTemplateTest {
 
     @Test
     void multiPageWithFileSeparator_realPagesOnly() {
-        // FILE_SEPARATOR 路径：parser 注入的，含一个孤儿注释
+        // FILE_SEPARATOR 路径：parser 注入的（parser 改用 COMPLETE_PAGE_PATTERN 后，
+        // 每段都含 DOCTYPE + 可选注释前缀，不会再有孤儿注释段）
         String htmlCode = """
-                <!-- orphan.html -->
                 <!-- ===== FILE_SEPARATOR ===== -->
+                <!-- page1.html -->
                 <!DOCTYPE html>
                 <html><head><title>页一</title></head><body>内容一</body></html>
                 <!-- ===== FILE_SEPARATOR ===== -->
@@ -119,7 +120,7 @@ class MultiFileCodeFileSaverTemplateTest {
 
         File[] htmls = htmlFiles();
         assertNotNull(htmls);
-        assertEquals(2, nonIndexHtmlCount(), "孤儿注释应被 filter，只存 2 个真实页");
+        assertEquals(2, nonIndexHtmlCount(), "应存 2 个真实页");
         assertTrue(indexHtmlExists(), "兜底 index.html");
     }
 
@@ -180,6 +181,48 @@ class MultiFileCodeFileSaverTemplateTest {
             return java.nio.file.Files.readString(f.toPath());
         } catch (Exception e) {
             return "";
+        }
+    }
+
+    @Test
+    void commentAttachedToDocType_fileNameFromComment() {
+        // 注释紧贴 DOCTYPE（本次 bug 的 LLM 输出格式）
+        // 修复前：split 拆开注释和 DOCTYPE → 注释被丢 → 文件名从 title 提取中文（如"原神角色图鉴.html"）
+        // 修复后：COMPLETE_PAGE_PATTERN 让注释跟着 DOCTYPE → 文件名从注释提取（如"genshin.html"）
+        String htmlCode = """
+                <!-- index.html -->
+                <!DOCTYPE html>
+                <html><head><title>米哈游角色图鉴 | 首页</title></head><body>首页</body></html>
+                <!-- genshin.html -->
+                <!DOCTYPE html>
+                <html><head><title>原神 · 角色图鉴</title></head><body>原神</body></html>
+                <!-- honkai3.html -->
+                <!DOCTYPE html>
+                <html><head><title>崩坏3 · 角色图鉴</title></head><body>崩坏3</body></html>
+                """;
+        MultiFileCodeResult result = new MultiFileCodeResult();
+        result.setHtmlCode(htmlCode);
+        result.setCssCode("body{}");
+        result.setJsCode("console.log(1)");
+
+        saver().saveCode(result, 100006L);
+
+        File[] subDirs = tmpDir.toFile().listFiles(File::isDirectory);
+        assertNotNull(subDirs);
+        File dir = subDirs[0];
+        String[] htmlNames = dir.list((d, n) -> n.endsWith(".html"));
+
+        assertNotNull(htmlNames);
+        // 应有 3 个真实页 + 1 个兜底 index.html = 4 个
+        // 关键：应有 genshin.html 和 honkai3.html（从注释提取），不是中文名
+        java.util.List<String> names = java.util.Arrays.asList(htmlNames);
+        assertTrue(names.contains("index.html"), "应有 index.html（注释提取或兜底）");
+        assertTrue(names.contains("genshin.html"), "应有 genshin.html（从注释提取，非中文 title）");
+        assertTrue(names.contains("honkai3.html"), "应有 honkai3.html（从注释提取，非中文 title）");
+        // 不应有中文 title 名
+        for (String n : names) {
+            assertFalse(n.contains("原神") || n.contains("崩坏"),
+                    "不应有中文 title 文件名: " + n);
         }
     }
 }

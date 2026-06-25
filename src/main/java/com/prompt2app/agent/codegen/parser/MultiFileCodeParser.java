@@ -62,21 +62,33 @@ public class MultiFileCodeParser implements CodeParser<MultiFileCodeResult> {
     }
 
     /**
-     * 如果一个 HTML 代码块里含多个 <!DOCTYPE html>，按 DOCTYPE 拆分为多页。
+     * 完整页正则：可选注释前缀 + DOCTYPE + 到下一个锚点前的内容。
+     *
+     * <p>替代旧的 {@code PAGE_SPLIT_PATTERN}（lookahead split）——旧 split 把
+     * {@code <!-- x.html -->\n<!DOCTYPE>} 拆成两段（注释段 + DOCTYPE 段），注释段被
+     * filter 丢弃导致文件名从 title 提取中文，和 LLM 链接不匹配。
+     *
+     * <p>新正则匹配"完整页"（注释跟着 DOCTYPE 走），孤儿注释（无后续 DOCTYPE）天然不匹配。
+     */
+    private static final Pattern COMPLETE_PAGE_PATTERN = Pattern.compile(
+            "(?:<!--\\s*[\\w.-]+\\.html\\s*-->\\s*)?<!DOCTYPE\\s*html>[\\s\\S]*?"
+            + "(?=(?:<!--\\s*[\\w.-]+\\.html\\s*-->\\s*)?<!DOCTYPE\\s*html>|\\Z)",
+            Pattern.CASE_INSENSITIVE);
+
+    /**
+     * 如果一个 HTML 代码块里含多个 <!DOCTYPE html>，按"完整页"匹配（含可选注释前缀）。
      * 如果只有一个 DOCTYPE，返回单元素列表（不拆）。
      *
-     * <p>方案 A（2026-06-26 task）：丢弃孤儿注释页——LLM 可能先列文件清单
-     * （{@code <!-- index.html -->} 等）再写实际内容，这些无 DOCTYPE 的孤儿注释
-     * 被 {@link #PAGE_SPLIT_PATTERN} 当成独立段落，需 filter 掉避免生成空壳文件。
+     * <p>方案（2026-06-26 split 注释分离修复）：用 {@link #COMPLETE_PAGE_PATTERN}
+     * 匹配完整页，注释跟着 DOCTYPE 段走——替代旧的 split + filter 方案。
      */
     private List<String> splitIfMultiPage(String htmlBlock) {
-        String[] parts = PAGE_SPLIT_PATTERN.split(htmlBlock);
+        Matcher matcher = COMPLETE_PAGE_PATTERN.matcher(htmlBlock);
         List<String> pages = new ArrayList<>();
-        for (String part : parts) {
-            String trimmed = part.trim();
-            // 只保留含 <!DOCTYPE 的段落（HTML 页必须有 DOCTYPE 才是完整页）
-            if (!trimmed.isEmpty() && trimmed.toLowerCase().contains("<!doctype")) {
-                pages.add(trimmed);
+        while (matcher.find()) {
+            String page = matcher.group().trim();
+            if (!page.isEmpty()) {
+                pages.add(page);
             }
         }
         return pages;
